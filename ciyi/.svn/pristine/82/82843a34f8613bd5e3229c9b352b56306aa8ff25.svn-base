@@ -1,0 +1,49 @@
+<div class="ch-container">
+    <div class="row">
+        <div class="col-md-12 center login-header">
+            <h1>通金魔方 视频管理系统</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="well col-md-4 center login-box">
+            <% if (error) { %>
+                <div class="alert alert-danger">
+                    <div><span class="ng-binding ng-scope"><%= error %></span></div>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info">
+                    请输入用户登录信息
+                </div>
+            <% } %>
+
+
+
+            <form class="form-horizontal" action="/adminuser/verify" method="post">
+                <fieldset>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i></span>
+                        <input name="username" type="text" class="form-control" placeholder="用户名">
+                    </div>
+                    <div class="clearfix"></div><br>
+
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock red"></i></span>
+                        <input name="password" type="password" class="form-control" placeholder="密 码">
+                    </div>
+                    <div class="clearfix"></div>
+                    <!-- 
+                        <div class="input-prepend">
+                            <label class="remember" for="remember"><input type="checkbox" id="remember"> Remember me</label>
+                        </div> 
+                    -->
+                    <div class="clearfix"></div>
+
+                    <p class="center col-md-5">
+                        <button type="submit" class="btn btn-primary">登 录</button>
+                    </p>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,92 @@
+<% include ../navigation %>
+<div class="ch-container">
+	<% include ../sidebar %>
+		<div id="content" class="col-lg-10 col-sm-10">
+	    	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="/">主页</a></li>
+		            <li><a href="/room/relayRooms">批量转播</a></li>
+		        </ul>
+		    </div>
+			<div class="row">
+			    <div class="box col-md-12">
+			        <div class="box-inner">
+			            <div class="box-header well" data-original-title="">
+			                <h2><i class="glyphicon glyphicon-edit"></i>批量转播</h2>
+			            </div>
+                        <% if (error) { %>
+			                <div class="center alert alert-danger">
+			                    <div><span class="ng-binding ng-scope"><%= error %></span></div>
+			                </div>
+		                <% } %>
+		                <% if (success) { %>
+			                <div class="center alert alert-success">
+			                    <div><span class="ng-binding ng-scope"><%= success %></span></div>
+			                </div>
+		                <% } %>
+			            <div class="box-content">
+			                <!--<form id="userinfo" class="form-horizontal" role="form" action="#" method="post" enctype="multipart/form-data">-->
+
+		                        <fieldset>
+		                        	<br />
+		                        	<div class="center col-md-8">
+			                            <div class="input-group input-group-md ">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i>主播房间</span>
+			                                <select id="c_forward" name="c_forward" class="form-control">
+										   		<option value=""> 无 </option>
+                                	    		<% if (room_region.status == 'ok') { %>
+													<% for(var i=0; i<room_region.mainroom.length; i++) {%>
+												   		<option value=<%= room_region.mainroom[i].c_hash%>> <%= room_region.mainroom[i].c_chatroom_name %> </option>
+													<% } %>
+                                	    		<% } else {%>
+                                	    			<option>没有主播间信息</option>
+                                	    		<% } %>
+											</select>
+			                            </div><br />
+                                        <div class="input-group input-group-md">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 转播列表</span>
+                                            <textarea title="转播间列表" id="relayText" name="r_text" class="form-control content relayText"></textarea>
+                                        </div><br />
+			                            <p class="center col-md-5">
+			                                <input type="button" id="zj_add_submit" class="btn btn-md btn-primary" value="提 交" />
+			                            </p>
+			                        </div>
+		                        </fieldset>
+			                <!--</form>-->
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
+<style type="text/css">
+    .relayText{
+        height: 316px !important;
+    }
+</style>
+<script type="text/javascript">
+    $('#zj_add_submit').click(function(){
+        var c_forward=$('#c_forward').val();
+        var relayText=$('#relayText').val().trim();
+        var re=/[，,]/g;
+        if(re.test(relayText)){
+            var rList=relayText.split(re);
+            var data={};
+            data.c_forward=c_forward;
+            data.roomList=rList;
+            $.post("/room/relayUpdate", data, function(result){
+                var res=JSON.parse(result);
+               if('ok'==res.status){
+                   alert('更新成功');
+               }else{
+                   alert('更新失败');
+               }
+            });
+        }else{
+            alert('房间太少请到房间列表修改');
+            return false;
+        }
+        return false;
+    });
+</script>

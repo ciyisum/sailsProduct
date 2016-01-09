@@ -1,0 +1,52 @@
+<% include ../navigation %>
+<div class="ch-container">
+	<% include ../sidebar %>
+		<div id="content" class="col-lg-10 col-sm-10">
+	    	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="#">主页</a></li>
+		            <li><a href="#">个人信息</a></li>
+		        </ul>
+		    </div>
+			<div class="row">
+			    <div class="box col-md-12">
+			        <div class="box-inner">
+			            <div class="box-header well" data-original-title="">
+			                <h2><i class="glyphicon glyphicon-edit"></i>个人信息</h2>
+			            </div>
+			            <div class="box-content">
+			                <form id="userinfo" class="form-horizontal" role="form" action="pupdate" method="post" enctype="multipart/form-data">
+		                        <input name="c_id" type="hidden" value="<%= profile.c_id || '' %>"/>
+		                        <fieldset>
+		                        	<br />
+		                        	<div class="center col-md-8">
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i></span>
+			                                <input name="username" type="text" class="form-control" placeholder="用户名" value="<%= profile.username || ''%>"/>
+			                            </div><br />
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock red"></i></span>
+			                                <% if (profile.roleid==1) {%>
+			                                	<input name="roleid" type="text" class="form-control" placeholder="角 色" readonly value="超级管理员">
+			                                <% } else {%>
+			                                	<input name="roleid" type="text" class="form-control" placeholder="角 色" readonly>
+			                                <% } %>
+			                            </div><br />
+			                            <div class="input-group input-group-md ">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i></span>
+			                                <input name="realname" type="text" class="form-control" placeholder="真实姓名" value="<%= profile.realname || ''%>">
+			                            </div><br />
+			                            <p class="center col-md-5">
+			                                <input type="submit" class="btn btn-md btn-primary" value="提 交" />
+			                            </p>
+			                        </div>
+		                        </fieldset>
+			                </form>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
+ 

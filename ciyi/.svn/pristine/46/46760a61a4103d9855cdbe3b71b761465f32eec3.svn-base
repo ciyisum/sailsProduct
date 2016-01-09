@@ -1,0 +1,5 @@
+<div class="box-content">
+    <div class="center alert alert-danger">
+        <div><span class="ng-binding ng-scope"><%=error%></span></div>
+    </div>
+</div>

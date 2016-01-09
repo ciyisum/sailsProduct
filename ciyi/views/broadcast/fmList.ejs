@@ -1,0 +1,418 @@
+<% include ../navigation %>
+<div class="ch-container" xmlns="http://www.w3.org/1999/html">
+    <% include ../sidebar %>
+    <div id="content" class="col-lg-10 col-sm-10">
+        <div>
+            <ul class="breadcrumb">
+                <li><a href="/">主页</a></li>
+                <li><a href="/broadcast/getfms">全平台广播列表</a></li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well">
+                        <h2><i class="glyphicon glyphicon-user"> 全平台广播列表</i></h2>
+
+                        <div class="input-group input-group-md" align="right" style="float: right;margin-top: -8px;">
+                            <input type="text" id="titlename" placeholder="广播标题"
+                                   style="text-align: center; margin-right: 7px; border-radius:5px; border:1px solid #d1d1d1;">
+                            <i class="glyphicon glyphicon-search gray search"
+                               style="margin: 12px 4px 0 8px;font-size: 15px;"></i>
+                            <a href="/broadcast/addfmview" target="_blank"><i class="glyphicon glyphicon-plus gray"
+                                                           style="margin: 11px 0 0 8px;font-size: 16px;"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <table class="table table-striped table-bordered table-hover bootstrap-datatable responsive">
+                            <thead>
+                            <tr>
+                                <th>广播标题</th>
+                                <th>广播内容</th>
+                                <th>广播链接</th>
+                                <!--<th>创建人</th>-->
+                                <!--<th>更新人</th>-->
+                                <th>广播创建时间</th>
+                                <!--<th>广播修改时间</th>-->
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody class="content" id="listbody">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--<div id="page" align="right" style="width:97%"></div>-->
+                    <div id="Pagination" class="pagination"></div>
+                    <!--/span-->
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+
+<div id="bg"></div>
+<div id="show">
+    <div id="box"></div>
+</div>
+<style type="text/css">
+    #box{
+        width:44px;
+        margin:120px auto 0 auto;
+        height:44px;
+        line-height:44px;
+        text-align:center;
+        background: url(/images/investjd.png);
+    }
+    #bg{
+        display: none;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index:1001;
+        -moz-opacity: 0.7;
+        opacity:.20;
+        filter: alpha(opacity=20);
+    }
+    #show{
+         display: none;
+         position: absolute;
+         top: 25%;
+         left: 35%;
+         width: 35%;
+         height: 25%;
+         background:none;
+         z-index:1002;
+         overflow: auto;
+    }
+</style>
+<style type="text/css">
+    @charset "utf-8";
+    .pagination {
+        float: right;
+    }
+    .pagination a {
+        text-decoration: none;
+        border: 1px solid #AAE;
+        color: #15B;
+    }
+    .pagination a, .pagination span {
+        display: inline-block;
+        padding: 0.1em 0.4em;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .pagination .current {
+        background: #26B;
+        color: #fff;
+        border: 1px solid #AAE;
+    }
+
+    .pagination .current.prev, .pagination .current.next{
+        color:#999;
+        border-color:#999;
+        background:#fff;
+    }
+</style>
+
+<script type="text/javascript">
+function onInfo(){
+    $("#bg").css("display","block");
+    $("#show").css("display","block");
+}
+function openbg(){
+    $("#bg").css("display","none");
+    $("#show").css("display","none");
+}
+function loadImg (i){
+    var object = document.getElementById('box');
+        var imgLeft = -(i*44+(i*10))+'px'
+        object.style.backgroundPosition = imgLeft+'\t'+'0px'
+        object.innerHTML = i+'%';
+}
+$("#titlename").bind("keydown",function(e){
+    if(e.which==13){
+        e.preventDefault();
+        $(".search").trigger("click");
+    }
+});
+$(".search").click(function () {
+    var data = {};
+    data.titlename = $(this).siblings('input').val();
+    $.post("/broadcast/getfmJson", data, function (result) {
+        var str = '';
+        for (var i=0; i<result.fms.length; i++) {
+            str=str+'<tr broadcast-id="'+result.fms[i].c_id+'">';
+            str=str+'<td class="col-md-1 title">'+result.fms[i].title+'</td>';
+            str=str+'<td class="col-md-2 content">'+result.fms[i].content+'</td>';
+            str=str+'<td class="col-md-2 link"><span>'+result.fms[i].link+'</span></td>';
+//                  str=str+'<td class="col-md-1"><span>'+result.fms[i].create_user+'</span></td>';
+//                  str=str+'<td class="col-md-1"><span>'+result.fms[i].update_user+'</span></td>';
+            str=str+'<td class="col-md-1 createAt"><span>'+result.fms[i].createAt+'</span></td>';
+//                  str=str+'<td class="col-md-1"><span>'+result.fms[i].updateAt+'</span></td>';
+            str=str+'<td class="col-md-2">';
+            str=str+'<button class="btn btn-warning send"><i class="glyphicon glyphicon-edit icon-white"></i> 发送</button>';
+            str=str+'<button class="btn btn-primary edit"><i class="glyphicon glyphicon-edit icon-white"></i> 编辑</button>';
+            str=str+'<button class="btn btn-success save" style="display:none;">';
+            str=str+'<i class="glyphicon glyphicon-edit icon-white"></i> 保存';
+            str=str+'</button>';
+//                        <!--<button class="btn btn-danger delete"><i class="glyphicon glyphicon-edit icon-white"></i> 删除</button>-->
+            str=str+'</td></tr>';
+        }
+        $("#listbody").empty().append(str);
+        $(".send").click(function () {
+            var data = {};
+            loadImg(0);
+            onInfo();
+            data.broadcast_id = $(this).parents('tr').attr('broadcast-id');
+            $.post("/broadcast/sendfm", data, function (result) {
+                if (result.status == 'ok') {
+                    var content = {};
+                    content.title = result.content[0].title;
+                    content.msg = result.content[0].content;
+                    content.link = result.content[0].link;
+                    content.type = 100;
+                    content.rid = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+                    fmLogin("1093480370063","804566", function(data) {
+                        token = $.md5(new Date().Format("yyyyMMdd") + data.sessionid + data.uid + '827Yc&da]_9|88,@1#tJ+vidEo').toUpperCase();
+                        content.uid = data.uid;
+                        var i = 0;
+                        var interValue=setInterval(function(){
+                            i++
+                            var connectInfo=result.connectors.shift();
+                            if(!connectInfo){
+                                loadImg(100);
+                                sleep(3000);
+                                openbg();
+                                alert('终于发完了');
+                                clearInterval(interValue);
+                                return false;
+                            }
+                            console.log('>>>>>>>>>>>>>>>>>>>>> sending ... <<<<<<<<<<<<<<<<<<<<<<<<');
+//                            var url = "http://117.121.31.196:3001?token=" + token + "&uid=" + data.uid + "&sid=" +data.sessionid;
+                            var url = "http://" + connectInfo.ip + ":" + connectInfo.port+ "?token=" + token + "&uid=" + data.uid + "&sid=" +data.sessionid;
+                            if ((i%8) == 0 && i != 0) {
+                                var perscent = i/8*10;
+                                console.log(perscent);
+                                loadImg(+perscent);
+                                    send_msg(token, data.uid, data.sessionid, content, url, function(data) {});
+                            } else {
+                                    send_msg(token, data.uid, data.sessionid, content, url, function(data) {});
+                            }
+                        },3000);
+                    });
+                } else {
+                    alert(result.msg);
+                }
+            });
+        });
+        $(".edit").click(function () {
+            var title = $(this).parents('td').siblings('.title');
+            title.attr('contenteditable', 'true');
+            title.css('background-color', '#9DE3EC');
+            title.css('-webkit-box-shadow', '#666 0px 0px 10px');
+
+            var content = $(this).parents('td').siblings('.content');
+            content.attr('contenteditable', 'true');
+            content.css('background-color', '#9DE3EC');
+            content.css('-webkit-box-shadow', '#666 0px 0px 10px');
+
+            var link = $(this).parents('td').siblings('.link');
+            link.attr('contenteditable', 'true');
+            link.css('background-color', '#9DE3EC');
+            link.css('-webkit-box-shadow', '#666 0px 0px 10px');
+            $(this).siblings('.save').css('display', 'inline-block');
+            $(this).siblings('.send').css('display', 'none');
+            $(this).css('display', 'none');
+        });
+        $(".save").click(function () {
+            var title = $(this).parents('td').siblings('.title');
+            var content = $(this).parents('td').siblings('.content');
+            var link = $(this).parents('td').siblings('.link');
+            var data = {};
+            data.title = title.text() || '';
+            data.content = content.text() || '';
+            data.link=link.text() || '';
+            data.c_id = $(this).parents('tr').attr('broadcast-id');
+            var edit = $(this).siblings('.edit');
+            var send= $(this).siblings('.send');
+            var save = $(this);
+            $.post("/broadcast/updatefm", data, function (result) {
+                if (result.status == 'fail') {
+                    if('SERVER_ERR_TITLE'==result.error){
+                        alert('请输入广播标题');
+                    }else{
+                        alert('数据更新失败');
+                    }
+                    return false;
+                }
+                alert('数据更新成功');
+                title.attr('contenteditable', null);
+                title.removeAttr('style');
+                content.attr('contenteditable', null);
+                content.removeAttr('style');
+                link.attr('contenteditable', null);
+                link.removeAttr('style');
+                edit.css('display', 'inline-block');
+                save.css('display', 'none');
+                send.css('display', 'inline-block');
+            });
+        });
+        return false;
+    });
+});
+$(function(){
+    var pageIndex = 0;     //页面索引初始值
+
+    InitTable(0);
+
+    $("#Pagination").pagination('<%= total_pages%>', {
+        callback: PageCallback,
+        prev_text: '上一页',       //上一页按钮里text
+        next_text: '下一页',       //下一页按钮里text
+        items_per_page: 10,  //显示条数
+        num_display_entries: 4,    //连续分页主体部分分页条目数
+        current_page: pageIndex,   //当前页索引
+        num_edge_entries: 2        //两侧首尾分页条目数
+    });
+
+    function PageCallback(index, jq) {
+        InitTable(index);
+    }
+
+    function InitTable(pageIndex) {
+
+        var data={};
+
+        data.current_page=pageIndex;
+        data.titlename=$('#titlename').val() || '';
+        $.post("/broadcast/getfmJson", data, function(result){
+            var str = '';
+            for (var i=0; i<result.fms.length; i++) {
+                  str=str+'<tr broadcast-id="'+result.fms[i].c_id+'">';
+                  str=str+'<td class="col-md-1 title">'+result.fms[i].title+'</td>';
+                  str=str+'<td class="col-md-2 content">'+result.fms[i].content+'</td>';
+                  str=str+'<td class="col-md-2 link"><span>'+result.fms[i].link+'</span></td>';
+//                  str=str+'<td class="col-md-1"><span>'+result.fms[i].create_user+'</span></td>';
+//                  str=str+'<td class="col-md-1"><span>'+result.fms[i].update_user+'</span></td>';
+                  str=str+'<td class="col-md-1 createAt"><span>'+result.fms[i].createAt+'</span></td>';
+//                  str=str+'<td class="col-md-1"><span>'+result.fms[i].updateAt+'</span></td>';
+                  str=str+'<td class="col-md-2">';
+                  str=str+'<button class="btn btn-warning send"><i class="glyphicon glyphicon-edit icon-white"></i> 发送</button>';
+                  str=str+'<button class="btn btn-primary edit"><i class="glyphicon glyphicon-edit icon-white"></i> 编辑</button>';
+                  str=str+'<button class="btn btn-success save" style="display:none;">';
+                  str=str+'<i class="glyphicon glyphicon-edit icon-white"></i> 保存';
+                  str=str+'</button>';
+//                        <!--<button class="btn btn-danger delete"><i class="glyphicon glyphicon-edit icon-white"></i> 删除</button>-->
+                  str=str+'</td></tr>';
+            }
+            $("#listbody").empty().append(str);
+
+            $(".send").click(function () {
+                var data = {};
+                loadImg(0);
+                onInfo();
+                data.broadcast_id = $(this).parents('tr').attr('broadcast-id');
+                $.post("/broadcast/sendfm", data, function (result) {
+                    if (result.status == 'ok') {
+                        var content = {};
+                        content.title = result.content[0].title;
+                        content.msg = result.content[0].content;
+                        content.link = result.content[0].link;
+                        content.type = 100;
+                        content.rid = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+                        fmLogin("1093480370063","804566", function(data) {
+                            token = $.md5(new Date().Format("yyyyMMdd") + data.sessionid + data.uid + '827Yc&da]_9|88,@1#tJ+vidEo').toUpperCase();
+                            content.uid = data.uid;
+                            var i = 0;
+                            var interValue=setInterval(function(){
+                                i++
+                                var connectInfo=result.connectors.shift();
+                                if(!connectInfo){
+                                    loadImg(100);
+                                    sleep(3000);
+                                    openbg();
+                                    clearInterval(interValue);
+                                    alert('终于发完了');
+                                    return false;
+                                }
+                                console.log('>>>>>>>>>>>>>>>>>>>>> sending ... <<<<<<<<<<<<<<<<<<<<<<<<');
+//                                var url = "http://117.121.31.196:3001?token=" + token + "&uid=" + data.uid + "&sid=" +data.sessionid;
+                                var url = "http://" + connectInfo.ip + ":" + connectInfo.port+ "?token=" + token + "&uid=" + data.uid + "&sid=" +data.sessionid;
+                                if ((i%8) == 0 && i != 0) {
+                                    var perscent = i/8*10;
+                                    loadImg(+perscent);
+                                    send_msg(token, data.uid, data.sessionid, content, url, function(data) {});
+                                } else {
+                                    send_msg(token, data.uid, data.sessionid, content, url, function(data) {});
+                                }
+                            },3000);
+                        });
+                    } else {
+                        alert(result.msg);
+                    }
+                });
+            });
+
+            $(".edit").click(function () {
+                var title = $(this).parents('td').siblings('.title');
+                title.attr('contenteditable', 'true');
+                title.css('background-color', '#9DE3EC');
+                title.css('-webkit-box-shadow', '#666 0px 0px 10px');
+
+                var content = $(this).parents('td').siblings('.content');
+                content.attr('contenteditable', 'true');
+                content.css('background-color', '#9DE3EC');
+                content.css('-webkit-box-shadow', '#666 0px 0px 10px');
+
+                var link = $(this).parents('td').siblings('.link');
+                link.attr('contenteditable', 'true');
+                link.css('background-color', '#9DE3EC');
+                link.css('-webkit-box-shadow', '#666 0px 0px 10px');
+                $(this).siblings('.save').css('display', 'inline-block');
+                $(this).siblings('.send').css('display', 'none');
+                $(this).css('display', 'none');
+
+            });
+            $(".save").click(function () {
+                var title = $(this).parents('td').siblings('.title');
+                var content = $(this).parents('td').siblings('.content');
+                var link = $(this).parents('td').siblings('.link');
+                var data = {};
+                data.title = title.text() || '';
+                data.content = content.text() || '';
+                data.link=link.text() || '';
+                data.c_id = $(this).parents('tr').attr('broadcast-id');
+                var edit = $(this).siblings('.edit');
+                var save = $(this);
+                var send= $(this).siblings('.send');
+                $.post("/broadcast/updatefm", data, function (result) {
+                    if (result.status == 'fail') {
+                        if('SERVER_ERR_TITLE'==result.error){
+                           alert('请输入广播标题');
+                        }else{
+                           alert('数据更新失败');
+                        }
+                        return false;
+                    }
+                    alert('数据更新成功');
+                    title.attr('contenteditable', null);
+                    title.removeAttr('style');
+                    content.attr('contenteditable', null);
+                    content.removeAttr('style');
+                    link.attr('contenteditable', null);
+                    link.removeAttr('style');
+                    edit.css('display', 'inline-block');
+                    save.css('display', 'none');
+                    send.css('display', 'inline-block');
+                });
+            });
+            return false;
+        });
+    }
+});
+</script>

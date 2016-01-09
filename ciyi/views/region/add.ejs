@@ -1,0 +1,55 @@
+<% include ../navigation %>
+<div class="ch-container">
+	<% include ../sidebar %>
+		<div id="content" class="col-lg-10 col-sm-10">
+	    	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="/">主页</a></li>
+		            <li><a href="/region/regionadd">添加大区</a></li>
+		        </ul>
+		    </div>
+			<div class="row">
+			    <div class="box col-md-12">
+			        <div class="box-inner">
+			            <div class="box-header well" data-original-title="">
+			                <h2><i class="glyphicon glyphicon-edit"></i>大区信息</h2>
+			            </div>
+                        <% if (error) { %>
+			                <div class="center alert alert-danger">
+			                    <div><span class="ng-binding ng-scope"><%= error %></span></div>
+			                </div>
+		                <% } %>
+		                <% if (success) { %>
+			                <div class="center alert alert-success">
+			                    <div><span class="ng-binding ng-scope"><%= success %></span></div>
+			                </div>
+		                <% } %>
+			            <div class="box-content">
+			                <form id="regioninfo" class="form-horizontal" role="form" action="add" method="post" enctype="multipart/form-data">
+		                        <fieldset>
+		                        	<br />
+		                        	<div class="center col-md-8">
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 大区名称</span>
+			                                <input id="c_name" name="c_name" type="text" class="form-control" placeholder="大区名称">
+			                            </div><br />
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 开通状态</span>
+			                                <select id"c_status" name="c_status" class="form-control">
+											  <option value="1" selected="selected">开通</option>
+											  <option value="2">未开通</option>
+											</select>
+			                            </div><br />
+			                            <p class="center col-md-5">
+			                                <input type="submit" class="btn btn-md btn-primary" value="提 交" />
+			                            </p>
+			                        </div>
+		                        </fieldset>
+			                </form>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>

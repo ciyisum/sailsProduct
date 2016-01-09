@@ -1,0 +1,152 @@
+<% include ../navigation %>
+<div class="ch-container">
+	<% include ../sidebar %>
+		<div id="content" class="col-lg-10 col-sm-10">
+	    	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="/">主页</a></li>
+		            <li><a href="/room/add">房间添加</a></li>
+		        </ul>
+		    </div>
+			<div class="row">
+			    <div class="box col-md-12">
+			        <div class="box-inner">
+			            <div class="box-header well" data-original-title="">
+			                <h2><i class="glyphicon glyphicon-edit"></i>房间信息</h2>
+			            </div>
+                        <% if (error) { %>
+			                <div class="center alert alert-danger">
+			                    <div><span class="ng-binding ng-scope"><%= error %></span></div>
+			                </div>
+		                <% } %>
+		                <% if (success) { %>
+			                <div class="center alert alert-success">
+			                    <div><span class="ng-binding ng-scope"><%= success %></span></div>
+			                </div>
+		                <% } %>
+			            <div class="box-content">
+			                <form id="userinfo" class="form-horizontal" role="form" action="/room/roomadd" method="post" enctype="multipart/form-data">
+		                        <input id="c_hash" name="c_hash" type="hidden"/>
+		                        <fieldset>
+		                        	<br />
+		                        	<div class="center col-md-8">
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 房间名称</span>
+			                                <input id="c_chatroom_name" name="c_chatroom_name" type="text" class="form-control">
+			                            </div><br />
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock red"></i> 房间类型</span>
+			                                <select id="c_code" name="c_code" class="form-control">
+											  <option value="1" selected="selected">主房间</option>
+											  <option value="2">转播房间</option>
+											</select>
+			                            </div><br />
+			                            <div class="input-group input-group-md ">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 转播关系</span>
+			                                <select id="c_forward" name="c_forward" class="form-control">
+										   		<option value=""> 无 </option>
+                                	    		<% if (room_region.status == 'ok') { %>
+													<% for(var i=0; i<room_region.mainroom.length; i++) {%>
+												   		<option value=<%= room_region.mainroom[i].c_hash%>> <%= room_region.mainroom[i].c_chatroom_name %> </option>
+													<% } %>
+                                	    		<% } else {%>
+                                	    			<option>没有转播信息</option>
+                                	    		<% } %>
+											</select>
+			                            </div><br />
+			                            <div class="input-group input-group-md ">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 所属大区</span>
+			                                <select id="c_region" name="c_region" class="form-control">
+										   		<option value="" selected="selected"> 无 </option>
+                                	    		<% if (room_region.status == 'ok') { %>
+													<% for(var i=0; i<room_region.region.length; i++) {%>
+												   		<option value="<%= room_region.region[i].c_id%>"> <%= room_region.region[i].c_name %> </option>
+													<% } %>
+                                	    		<% } else {%>
+                                	    			<option>没有大区信息</option>
+                                	    		<% } %>
+											</select>
+			                            </div><br />
+			                            <div class="input-group input-group-md ">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 业务类型</span>
+			                                <select id="c_business" name="c_business" class="form-control">
+											  <option value=""> 无 </option>
+											  <option value="1">商品</option>
+											  <option value="2">基金</option>
+											  <option value="3">H股</option>
+											  <option value="4">证券</option>
+											  <option value="5">汇银</option>
+											  <option value="6">华融</option>
+											  <option value="7">新华融</option>
+											  <option value="8">银创</option>
+											  <option value="9">广贵</option>
+											</select>
+			                            </div><br />
+			                            <div class="input-group input-group-md ">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 房主&nbsp;&nbsp;id &nbsp;</span>
+			                                <input id="c_owner" name="c_owner" type="text" class="form-control">
+			                            </div><br />
+			                            <div class="input-group input-group-md ">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 房主昵称</span>
+			                                <input id="c_ownername" name="c_ownername" type="text" class="form-control">
+			                            </div><br />
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 业务组ID</span>
+			                                <input id="c_Branch" name="c_Branch" type="text" class="form-control">
+			                            </div><br />
+                                        <div class="input-group input-group-md">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 营业部管理员ID</span>
+                                            <input id="department_id" name="department_id" type="text" class="form-control">
+                                        </div><br />
+                                        <div class="input-group input-group-md">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 营业部ID</span>
+                                            <input id="c_dep" name="c_dep" type="text" class="form-control">
+                                        </div><br />
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 开通状态</span>
+			                                <select id="c_status" name="c_status" class="form-control">
+											  <option value="1" selected="selected">开通</option>
+											  <option value="2">未开通</option>
+											</select>
+			                            </div><br />
+			                            <p class="center col-md-5">
+			                                <input type="submit" id="zj_add_submit" class="btn btn-md btn-primary" value="提 交" />
+			                            </p>
+			                        </div>
+		                        </fieldset>
+			                </form>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+	  $("#c_hash").val(Math.round(Math.random()*10000000));
+	});
+    $('#zj_add_submit').click(function(){
+        var c_Branch=$('#c_Branch').val();
+        var department_id=$('#department_id').val();
+        var c_dep=$('#c_dep').val();
+        var c_owner=$('#c_owner').val();
+        if(!!isNaN(+c_Branch) || parseInt(c_Branch)<=0){
+            alert('请输入正确的业务组ID！');
+           return false;
+        }
+        if(!!isNaN(+department_id) || parseInt(department_id)<=0){
+            alert('请输入正确的营业部管理员ID！');
+            return false;
+        }
+        if(!!isNaN(+c_dep) || parseInt(c_dep)<=0){
+            alert('请输入正确的营业部ID！');
+            return false;
+        }
+        if(!!isNaN(+c_owner) || parseInt(c_owner)<=0){
+            alert('请输入正确的房主ID！');
+            return false;
+        }
+        return true;
+    });
+</script>

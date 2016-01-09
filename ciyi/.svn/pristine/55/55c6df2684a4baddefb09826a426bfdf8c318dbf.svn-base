@@ -1,0 +1,204 @@
+<%include ../navigation%>
+<div class="ch-container">
+	<% include ../sidebar%>
+        <div id="content" class="col-lg-10 col-sm-10">
+        	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="/">主页</a></li>
+		            <li><a href="/room/owner">讲师结算</a></li>
+		        </ul>
+		    </div>
+    	<div class="row">
+		    <div class="box col-md-12">
+		    <div class="box-inner">
+		    <div class="box-header well" style='padding-top:0'>
+		        <h2 style='margin-top:5px;'><i class="glyphicon glyphicon-user"> 讲师结算房间列表</i></h2>
+		        	<div class="input-group input-group-md" align="right" style='margin-top:-2px; float:right;'>
+			        	<input id="isearch" type="text" style="text-align: center; margin:0 9px 0 0; border-radius:5px; border:1px solid #d1d1d1;">
+			        	<i class="glyphicon glyphicon-search gray" id="search" style="margin-top:11px; font-size:15px;"></i>
+			        	<!-- <a href="/room/owner_add" target="_blank"><i class="glyphicon glyphicon-plus gray" style="margin: 10px 0 0 8px;font-size: 16px;"></i></a> -->
+		        	</div>
+		    </div>
+		    <div class="box-content">
+		    	<table id="roomlist" class="table table-striped table-bordered table-hover bootstrap-datatable responsive">
+				    <thead>
+					    <tr>
+					        <th>讲师ID</th>
+					        <th>讲师昵称</th>
+					        <th>房间名称</th>
+					        <th>操作</th>
+					    </tr>
+				    </thead>
+	    			<tbody class="content">
+	    				<% for(var i=0; i<records.length; i++) { %>
+	    					<tr Id="<%= records[i].Id %>">
+	    						<td class="col-md-1 uid"><%= records[i].uid || '讲师ID丢失' %></td>
+	    						<td class="col-md-1 nickname"><%= records[i].nickname || '讲师名称丢失' %></td>
+	    						<td class="col-md-1 c_chatroom_name"><%= records[i].c_chatroom_name || '房间名称丢失' %></td>
+						        <td class="col-md-1" style="position:relative;">
+						        	<button class="btn btn-info edit">
+						                <i class="glyphicon glyphicon-edit icon-white"></i> 编辑
+						            </button>
+						            <button class="btn btn-success save" style="display:none;">
+						                <i class="glyphicon glyphicon-edit icon-white"></i> 保存
+						            </button>
+<!-- 						            <button class="btn btn-danger delete">
+						                <i class="glyphicon glyphicon-trash icon-white"></i> 删 除 
+						            </button> -->
+									</div>
+						        </td>
+	    					</tr>
+	    				<% } %>
+	    			</tbody>
+	    		</table>
+	    	</div>
+	    </div>
+    <!--/span-->
+	</div>
+</div>
+<script type="text/javascript">
+	$(".delete").click(function() {
+		var data = {};
+		data.Id = $(this).parents('tr').attr('Id');
+		var index = $(this);
+		console.log('data ===========> ', data);
+	  	$.post("/room/owner_delete", data, function(result){
+	  		console.log('result ====> ', result);
+			if (result.status=='ok') {
+				alert('删除成功');
+				index.parent().parent().remove();
+			} else {
+		    	alert('删除失败');
+	  		}
+	  	});
+	});
+	
+	$(".edit").click(function() {
+		$(this).siblings('.save').css('display','inline-block');
+		$(this).css('display', 'none');
+		var c_chatroom_name=$(this).parents('td').siblings('.c_chatroom_name');
+		//td-->c_chatroom_name
+		c_chatroom_name.attr('contenteditable', 'true');
+		c_chatroom_name.css('background-color', '#9DE3EC');
+		c_chatroom_name.css('-webkit-box-shadow', '#666 0px 0px 10px');
+	});
+
+	$(".save").click(function () {
+		var index = $(this);
+		var uid=$(this).parents('td').siblings('.uid');
+		var c_chatroom_name=$(this).parents('td').siblings('.c_chatroom_name');
+		var nickname=$(this).parents('td').siblings('.nickname');
+
+		var data={};
+		data.Id=$(this).parents('tr').attr('Id');
+		if (!c_chatroom_name.text() || c_chatroom_name.text() == '') {
+			alert('讲师名称不能为空');
+			return false;
+		}
+		data.uid=uid.text();
+		data.nickname=nickname.text();
+		data.c_chatroom_name=$(this).parents('td').siblings('.c_chatroom_name').text();
+	  	$.post("/room/owner_update", data, function(result){
+	  		console.log('result ====> ', result);
+			if (result.status=='ok') {
+				alert('更新数据成功');
+				//td-->c_chatroom_name
+				c_chatroom_name.attr('contenteditable', null);
+				c_chatroom_name.removeAttr('style');
+				index.siblings('.edit').css('display','inline-block');
+				index.css('display', 'none');
+	  		// } else if (result.status=='fail' && result.msg=='nickname_err') {
+	  			// alert('用户昵称不存在');
+	  		} else if (result.status=='fail' && result.msg=='room_not_exist') {
+	  			alert('房间不存在');
+	  		} else {
+		    	alert('更新数据失败');
+	  		}
+	  	});
+	});
+
+	$("#isearch").bind("keydown",function(e){
+		if(e.which==13){
+			e.preventDefault();
+			$("#search").trigger("click");
+		}	
+	});
+
+	$("#search").click(function () {
+		var data = {};
+		data.search = $(this).siblings('input').val() || 's';
+	  	$.post("/room/owner_search", data, function(result){
+	  		console.log('result============> ', result);
+			var str = '';
+			for (var i=0; i<result.records.length; i++) {
+				str = str + '<tr Id="<%= ' + result.records[i].Id + '%>">';
+				str = str + '<td class="col-md-1 uid">' + result.records[i].uid + '</td>';
+				str = str + '<td class="col-md-1 nickname">' + result.records[i].nickname + '</td>';
+				str = str + '<td class="col-md-1 c_chatroom_name">' + result.records[i].c_chatroom_name + '</td>';
+				// str = str + '<td class="col-md-1" style="position:relative;"><button class="btn btn-info edit"><i class="glyphicon glyphicon-edit icon-white"></i> 编辑</button><button class="btn btn-success save" style="display:none;"><i class="glyphicon glyphicon-edit icon-white"></i> 保存</button> <button class="btn btn-danger delete"><i class="glyphicon glyphicon-trash icon-white"></i> 删 除 </button></div></td></tr>';
+				str = str + '<td class="col-md-1" style="position:relative;"><button class="btn btn-info edit"><i class="glyphicon glyphicon-edit icon-white"></i> 编辑</button><button class="btn btn-success save" style="display:none;"><i class="glyphicon glyphicon-edit icon-white"></i> 保存</button>';
+						            
+			}
+			$(".content").html(str);
+
+			$(".delete").click(function() {
+				var data = {};
+				data.Id = $(this).parents('tr').attr('Id');
+				var index = $(this);
+				console.log('data ===========> ', data);
+			  	$.post("/room/owner_delete", data, function(result){
+			  		console.log('result ====> ', result);
+					if (result.status=='ok') {
+						alert('删除成功');
+						index.parent().parent().remove();
+					} else {
+				    	alert('删除失败');
+			  		}
+			  	});
+			});
+
+			$(".edit").click(function() {
+				$(this).siblings('.save').css('display','inline-block');
+				$(this).css('display', 'none');
+				var c_chatroom_name=$(this).parents('td').siblings('.c_chatroom_name');
+				//td-->c_chatroom_name
+				c_chatroom_name.attr('contenteditable', 'true');
+				c_chatroom_name.css('background-color', '#9DE3EC');
+				c_chatroom_name.css('-webkit-box-shadow', '#666 0px 0px 10px');
+			});
+			$(".save").click(function () {
+				var index = $(this);
+				var uid=$(this).parents('td').siblings('.uid');
+				var nickname=$(this).parents('td').siblings('.nickname');
+				var c_chatroom_name=$(this).parents('td').siblings('.c_chatroom_name');
+
+				var data={};
+				data.Id=$(this).parents('tr').attr('Id');
+				if (!c_chatroom_name.text() || c_chatroom_name.text() == '') {
+					alert('讲师名称不能为空');
+					return false;
+				}
+				data.uid=uid.text();
+				data.nickname=nickname.text();
+				data.c_chatroom_name=$(this).parents('td').siblings('.c_chatroom_name').text();
+			  	$.post("/room/owner_update", data, function(result){
+			  		console.log('result ====> ', result);
+					if (result.status=='ok') {
+						alert('更新数据成功');
+						//td-->c_chatroom_name
+						c_chatroom_name.attr('contenteditable', null);
+						c_chatroom_name.removeAttr('style');
+						index.siblings('.edit').css('display','inline-block');
+						index.css('display', 'none');
+			  		// } else if (result.status=='fail' && result.msg=='nickname_err') {
+			  			// alert('用户昵称不存在');
+			  		} else if (result.status=='fail' && result.msg=='room_not_exist') {
+			  			alert('房间不存在');
+			  		} else {
+				    	alert('更新数据失败');
+			  		}
+			  	});
+			});
+	  	});
+	});
+</script>

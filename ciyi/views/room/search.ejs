@@ -1,0 +1,253 @@
+<%include ../navigation%>
+<div class="ch-container">
+	<% include ../sidebar%>
+        <div id="content" class="col-lg-10 col-sm-10">
+        	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="#">主页</a></li>
+		            <li><a href="#">房间列表</a></li>
+		        </ul>
+		    </div>
+    	<div class="row">
+		    <div class="box col-md-12">
+		    <div class="box-inner">
+		    <div class="box-header well">
+		        <h2><i class="glyphicon glyphicon-user"> 搜索结果列表</i></h2>
+		    </div>
+		    <div class="box-content">
+		    	<table id="roomlist" class="table table-striped table-bordered table-hover bootstrap-datatable responsive">
+				    <thead>
+					    <tr>
+					        <th>房间名称</th>
+					        <th>房间类型</th>
+					        <th>转播关系</th>
+					        <th>密码</th>
+					        <th>大区</th>
+					        <th>业务类型</th>
+					        <th>房主</th>
+					        <th>申请日期</th>
+					        <th>状态</th>
+					        <th>操作</th>
+					    </tr>
+				    </thead>
+		    		<tbody >
+		    			<% if (rooms || rooms!=undefined || rooms!='') {%>
+			    			<% for(var i=0; i<rooms.length; i++) {%>
+							    <tr c-id="<%= rooms[i].c_id %>">
+							        <td class="col-md-1 roomname"><%= rooms[i].c_chatroom_name || '房间名称丢失' %></td>
+							        <td class="col-md-1 roomtype1">
+							        	<% if (rooms[i].c_code == 1) { %>
+							        		<span class="roomtype1" value="1">主房间</span>
+							        	<% } else if (rooms[i].c_code == 2) { %>
+							        		<span class="roomtype1" value="2">转播房间</span>
+							        	<% } else { %>
+							        		<span class="roomtype1" value="null">无</span>
+							        	<% } %>
+							        	<span class="roomtype2" style="display:none;">
+							        		<select class="form-control">
+							        			<option value="1" selected="selected">主房间</option>
+							        			<option value="2">转播房间</option>
+							        		</select>
+							        	</span>
+							        </td>
+							        <td class="col-md-2 roomforward1">
+						        		<span class="roomforward1" value="<%= rooms[i].c_forward%>"><%= rooms[i].c_forward_name%></span>
+							        	<span class="roomforward2" style="display:none;">
+							        		<select class="form-control roomforward2"></select>
+							        	</span>
+							        </td>
+							        <td class="col-md-1 roompass"><%= rooms[i].c_roompassword || '无' %></td>
+							        <td class="col-md-1 roomregion1">
+						        		<span class="roomregion1" value="<%= rooms[i].c_region%>"><%= rooms[i].c_region_name%></span>
+							        	<span class="roomregion2" style="display:none;">
+							        		<select class="form-control roomregion2"></select>
+							        	</span>
+							        </td>
+							        <td class="col-md-1 roombusiness1">
+							        	<% if (rooms[i].c_business == 1) { %>
+							        		<span class="roombusiness1" value="1">商品</span>
+							        	<% } else if (rooms[i].c_business == 2) { %>
+							        		<span class="roombusiness1" value="2">基金</span>
+							        	<% } else if (rooms[i].c_business == 3) { %>
+							        		<span class="roombusiness1" value="3">H股</span>
+							        	<% } else if (rooms[i].c_business == 4) { %>
+							        		<span class="roombusiness1" value="4">证券</span>
+							        	<% } else if (rooms[i].c_business == 5) { %>
+							        		<span class="roombusiness1" value="4">汇银</span>
+							        	<% } else if (rooms[i].c_business == 6) { %>
+							        		<span class="roombusiness1" value="4">华融</span>
+							        	<% } else { %>
+							        		<span class="roombusiness1" value="null">无</span>
+							        	<% } %>
+							        	<span class="roombusiness2" style="display:none;">
+							        		<select class="form-control">
+							        			<option value="1" selected="selected">商品</option>
+							        			<option value="2">基金</option>
+							        			<option value="3">H股</option>
+							        			<option value="4">证券</option>
+												<option value="5">汇银</option>
+												<option value="6">华融</option>
+							        		</select>
+							        	</span>
+							        </td>
+							        <td class="col-md-1"><%= rooms[i].c_ownername || '房主丢失' %></td>
+							        <td class="col-md-2"><%= rooms[i].c_apply || '申请日期丢失' %></td>
+							        <td class="col-md-2 roomstatus1">
+							        	<% if (rooms[i].c_status == 0) { %>
+							        		<span class="roomstatus1" value="0">未开通</span>
+							        	<% } else if (rooms[i].c_status == 1) { %>
+							        		<span class="roomstatus1" value="1">开通</span>
+							        	<% } else { %>
+							        		房间状态丢失
+							        	<% } %>
+							        	<span class="roomstatus2" style="display:none;">
+							        		<select class="form-control">
+							        			<option value="1" selected="selected">开通</option>
+							        			<option value="0">未开通</option>
+							        		</select>
+							        	</span>
+							        </td>
+							        <td class="col-md-1" style="position:relative;">
+							        	<button class="btn btn-info edit">
+							                <i class="glyphicon glyphicon-edit icon-white"></i> 编辑
+							            </button>
+							            <button class="btn btn-success save" style="display:none;">
+							                <i class="glyphicon glyphicon-edit icon-white"></i> 保存
+							            </button>
+										</div>
+							        </td>
+							    </tr>
+							<% } %>
+						<% } %>
+	    			</tbody>
+	    		</table>
+	    	</div>
+	    </div>
+    <!--/span-->
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(".edit").click(function() {
+		$(this).siblings('.save').css('display','inline-block');
+		$(this).css('display', 'none');
+		var roomname=$(this).parents('td').siblings('.roomname');
+		var roompass=$(this).parents('td').siblings('.roompass');
+		var roomstatus1=$(this).parents('td').siblings('.roomstatus1');
+		var roomtype1=$(this).parents('td').siblings('.roomtype1');
+		var roombusiness1=$(this).parents('td').siblings('.roombusiness1');
+		var roomforward1=$(this).parents('td').siblings('.roomforward1');
+		var roomregion1=$(this).parents('td').siblings('.roomregion1');
+		//td-->roomname
+		roomname.attr('contenteditable', 'true');
+		roomname.css('background-color', '#9DE3EC');
+		roomname.css('-webkit-box-shadow', '#666 0px 0px 10px');
+		//td-->roompass
+		roompass.attr('contenteditable', 'true');
+		roompass.css('background-color', '#9DE3EC');
+		roompass.css('-webkit-box-shadow', '#666 0px 0px 10px');
+		//td-->roomstatus1
+		roomstatus1.css('background-color', '#9DE3EC');
+		roomstatus1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+		roomstatus1.find('.roomstatus1').css('display', 'none');
+		roomstatus1.find('.roomstatus2').css('display', 'inline-block');
+		roomstatus1.find('.roomstatus2 .form-control').val(roomstatus1.find('.roomstatus1').attr("value"));
+		//td-->roomtype1
+		roomtype1.css('background-color', '#9DE3EC');
+		roomtype1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+		roomtype1.find('.roomtype1').css('display', 'none');
+		roomtype1.find('.roomtype2').css('display', 'inline-block');
+		roomtype1.find('.roomtype2 .form-control').val(roomtype1.find('.roomtype1').attr("value"));
+		//td-->roombusiness1
+		roombusiness1.css('background-color', '#9DE3EC');
+		roombusiness1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+		roombusiness1.find('.roombusiness1').css('display', 'none');
+		roombusiness1.find('.roombusiness2').css('display', 'inline-block');
+		roombusiness1.find('.roombusiness2 .form-control').val(roombusiness1.find('.roombusiness1').attr("value"));
+	  	$.post("/room/edit", function(res){
+			//td-->roomforward1
+			roomforward1.css('background-color', '#9DE3EC');
+			roomforward1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+			roomforward1.find('.roomforward1').css('display', 'none');
+			roomforward1.find('.roomforward2').css('display', 'inline-block');
+			for (var i=0; i<res.mainroom.length; i++) {
+				$("<option value='" + res.mainroom[i].c_hash + "'>" + res.mainroom[i].c_chatroom_name + "</option>").appendTo($(".roomforward2 select"));
+			}
+			roomforward1.find('.roomforward2 .form-control').val(roomforward1.find('.roomforward1').attr("value"));
+			roomregion1.css('background-color', '#9DE3EC');
+			roomregion1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+			roomregion1.find('.roomregion1').css('display', 'none');
+			roomregion1.find('.roomregion2').css('display', 'inline-block');
+			for (var i=0; i<res.region.length; i++) {
+				$("<option value='" + res.region[i].c_id + "'>" + res.region[i].c_name + "</option>").appendTo($(".roomregion2 select"));
+			}
+			roomregion1.find('.roomregion2 .form-control').val(roomregion1.find('.roomregion1').attr("value"));
+	  	});
+		return false;
+	});
+	$(".save").click(function () {
+		$(this).siblings('.edit').css('display','inline-block');
+		$(this).css('display', 'none');
+		var roomname=$(this).parents('td').siblings('.roomname');
+		var roompass=$(this).parents('td').siblings('.roompass');
+		var roomstatus1=$(this).parents('td').siblings('.roomstatus1');
+		var roomtype1=$(this).parents('td').siblings('.roomtype1');
+		var roombusiness1=$(this).parents('td').siblings('.roombusiness1');
+		var roomforward1=$(this).parents('td').siblings('.roomforward1');
+		var roomregion1=$(this).parents('td').siblings('.roomregion1');
+		//td-->regionname
+		roomname.attr('contenteditable', null);
+		roomname.removeAttr('style');
+		//td-->roomstatus1
+		roomstatus1.removeAttr('style');
+		roomstatus1.find('.roomstatus1').css('display', 'inline-block');
+		roomstatus1.find('.roomstatus2').css('display', 'none');
+		//td-->roompass
+		roompass.attr('contenteditable', null);
+		roompass.removeAttr('style');
+		//td-->roomtype1
+		roomtype1.removeAttr('style');
+		roomtype1.find('.roomtype1').css('display', 'inline-block');
+		roomtype1.find('.roomtype2').css('display', 'none');
+		//td-->roombusiness1
+		roombusiness1.removeAttr('style');
+		roombusiness1.find('.roombusiness1').css('display', 'inline-block');
+		roombusiness1.find('.roombusiness2').css('display', 'none');
+		//td-->roomforward1
+		roomforward1.removeAttr('style');
+		roomforward1.find('.roomforward1').css('display', 'inline-block');
+		roomforward1.find('.roomforward2').css('display', 'none');
+		//td-->roomregion1
+		roomregion1.removeAttr('style');
+		roomregion1.find('.roomregion1').css('display', 'inline-block');
+		roomregion1.find('.roomregion2').css('display', 'none');
+		var data={};
+		data.c_id=$(this).parents('tr').attr('c-id');
+		if (!roomname.text() || roomname.text() == '') {
+			alert('房间名称不能为空');
+			return false;
+		}
+		data.c_chatroom_name=roomname.text();
+		if (!roompass.text() || roompass.text() != '无') {
+			data.c_roompassword=roompass.text();
+		}
+		data.c_status=roomstatus1.find('.roomstatus2 .form-control').val();
+		data.c_code=roomtype1.find('.roomtype2 .form-control').val();
+		data.c_business=roombusiness1.find('.roombusiness2 .form-control').val();
+		data.c_forward=roomforward1.find('.roomforward2 .form-control').val();
+		data.c_region=roomregion1.find('.roomregion2 .form-control').val();
+	  	$.post("/room/update", data, function(result){
+	  		if (result.status=='ok') {
+				roomstatus1.find('.roomstatus1').html(roomstatus1.find('.roomstatus2 .form-control').find('option:selected').text() || '无');
+				roomtype1.find('.roomtype1').html(roomtype1.find('.roomtype2 .form-control').find('option:selected').text() || '无');
+				roombusiness1.find('.roombusiness1').html(roombusiness1.find('.roombusiness2 .form-control').find('option:selected').text() || '无');
+				roomforward1.find('.roomforward1').html(roomforward1.find('.roomforward2 .form-control').find('option:selected').text() || '无');
+				roomregion1.find('.roomregion1').html(roomregion1.find('.roomregion2 .form-control').find('option:selected').text() || '无');
+				alert('更新数据成功');
+	  			return true;
+	  		}
+	    	alert('更新数据失败');
+	    	return false;
+	  	});
+	});
+</script>

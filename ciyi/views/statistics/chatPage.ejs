@@ -1,0 +1,123 @@
+<% include ../navigation %>
+<div class="ch-container">
+    <% include ../sidebar %>
+    <div id="content" class="col-lg-10 col-sm-10">
+        <div>
+            <ul class="breadcrumb">
+                <li><a href="/">主页</a></li>
+                <li><a href="/platform/chatInfoDel">删除用户聊天历史记录</a></li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2>
+                            <i class="glyphicon glyphicon-edit"></i>删除用户聊天历史记录
+                        </h2>
+                    </div>
+                    <% if (error) { %>
+                    <div class="center alert alert-danger">
+                        <div><span class="ng-binding ng-scope"><%= error %></span></div>
+                    </div>
+                    <% } %>
+                    <div class="box-content">
+                        <!--<form class="form-horizontal" role="form" action="/room/roomliftbanfind" method="post" enctype="multipart/form-data">-->
+                        <form class="form-horizontal" role="form" enctype="multipart/form-data">
+                            <fieldset>
+                                <br/>
+
+                                <div class="center col-md-8" id="text_zj">
+                                    <div class="input-group input-group-md">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i></span>
+                                            <input name="username" type="text" id="username" class="form-control zj_css_width"  placeholder="用户名称"/>
+                                            <span class="input-group-addon" ><i class="glyphicon glyphicon-user red"></i></span>
+                                            <input name="roomhash"  id="roomhash" type="text" class="form-control zj_css_width" placeholder="房间hash"/>
+                                            <span class="input-group-addon zj_add_back"></span>
+                                            <input type="submit" id="zj_js_submit" class="btn btn-md btn-primary form-control " value="提 交" />
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                        <div class="zj-add-view"></div>
+                        <div class="page"></div>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="zj-add-view"></div>-->
+        </div>
+    </div>
+</div>
+</div>
+<style type="text/css">
+    .input-group .zj_css_width {
+        width: 97% !important;
+    }
+    .zj_add_back{
+        border-style:none ;
+        background-color:#ffffff;
+    }
+</style>
+<!--
+修改分页js代码
+-->
+<style type="text/css">
+    @charset "utf-8";
+    .pagination {
+        float: right;
+    }
+
+    .pagination a {
+        text-decoration: none;
+        border: 1px solid #AAE;
+        color: #15B;
+    }
+
+    .pagination a, .pagination span {
+        display: inline-block;
+        padding: 0.1em 0.4em;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .pagination .current {
+        background: #26B;
+        color: #fff;
+        border: 1px solid #AAE;
+    }
+
+    .pagination .current.prev, .pagination .current.next {
+        color: #999;
+        border-color: #999;
+        background: #fff;
+    }
+</style>
+<script type="application/javascript">
+    $('#zj_js_submit').click(function () {
+        var data = {};
+        var c_name = $('#username').val();
+        var c_hash = $('#roomhash').val();
+        if (!c_name.trim() && !c_hash.trim()) {
+           var str='<div class="box-content"><div class="center alert alert-danger"><div><span class="ng-binding ng-scope">请输入用户名称或房间hash</span></div></div></div>'
+            $('.zj-add-view').html(str);
+            $('.page').html('');
+            return false;
+        }
+        data.c_name=c_name;
+        data.c_hash=c_hash;
+        $.post('/platform/delUserChat', data, function (res) {
+            if('ok'==res.status){
+                $('.page').html('');
+                var str = '<div class="box-content"><div class="center alert alert-danger"><div><span class="ng-binding ng-scope"> 删除成功</span></div></div></div>'
+                $('.zj-add-view').html(str);
+                return false;
+            }else{
+                $('.page').html('');
+                var str = '<div class="box-content"><div class="center alert alert-danger"><div><span class="ng-binding ng-scope">房间没有被禁用信息</span></div></div></div>'
+                $('.zj-add-view').html(str);
+                return false;
+            }
+        });
+        return false;
+    });
+</script>

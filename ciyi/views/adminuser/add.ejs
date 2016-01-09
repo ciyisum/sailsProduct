@@ -1,0 +1,62 @@
+<% include ../navigation %>
+<div class="ch-container">
+	<% include ../sidebar %>
+		<div id="content" class="col-lg-10 col-sm-10">
+	    	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="/">主页</a></li>
+		            <li><a href="/adminuser/useradd">管理员添加</a></li>
+		        </ul>
+		    </div>
+			<div class="row">
+			    <div class="box col-md-12">
+			        <div class="box-inner">
+			            <div class="box-header well" data-original-title="">
+			                <h2><i class="glyphicon glyphicon-edit"></i>管理员信息</h2>
+			            </div>
+                        <% if (error) { %>
+			                <div class="center alert alert-danger">
+			                    <div><span class="ng-binding ng-scope"><%= error %></span></div>
+			                </div>
+		                <% } %>
+		                <% if (success) { %>
+			                <div class="center alert alert-success">
+			                    <div><span class="ng-binding ng-scope"><%= success %></span></div>
+			                </div>
+		                <% } %>
+			            <div class="box-content">
+			                <form id="userinfo" class="form-horizontal" role="form" action="add" method="post" enctype="multipart/form-data">
+		                        <fieldset>
+		                        	<br />
+		                        	<div class="center col-md-8">
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i></span>
+			                                <input id="username" name="username" type="text" class="form-control" placeholder="用户名" value="<%= iusername || ''%>">
+			                            </div><br />
+			                            <div class="input-group input-group-md">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock red"></i></span>
+			                                <input id="password" name="password" type="password" class="form-control" placeholder="密 码">
+			                            </div><br />
+			                            <div class="input-group input-group-md ">
+			                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i></span>
+			                                <input name="realname" type="text" class="form-control" placeholder="真实姓名" value="<%= realname || ''%>">
+			                            </div><br />
+			                            <div class="input-group input-group-md">
+						                    <label><input class="form-control" type="radio" name="roleid" value="1" checked>管理员</label>
+						                    <label><input class="form-control" type="radio" name="roleid" value="3" checked>客服</label>
+						                    <label><input class="form-control" type="radio" name="roleid" value="2" checked>销售</label>
+						                    <label><input class="form-control" type="radio" name="roleid" value="4" checked>SEO</label>
+			                            </div><br />
+			                            <p class="center col-md-5">
+			                                <input type="submit" class="btn btn-md btn-primary" value="提 交" />
+			                            </p>
+			                        </div>
+		                        </fieldset>
+			                </form>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,388 @@
+<%include ../navigation%>
+<div class="ch-container">
+	<% include ../sidebar%>
+        <div id="content" class="col-lg-10 col-sm-10">
+        	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="/">主页</a></li>
+		            <li><a href="/room/auditlist">免费审核</a></li>
+		        </ul>
+		    </div>
+    	<div class="row">
+		    <div class="box col-md-12">
+		    <div class="box-inner">
+		    <div class="box-header well">
+		        <h2><i class="glyphicon glyphicon-user"> 免费审核列表</i></h2>
+	        	<div class="input-group input-group-md" align="right" style='margin-top:-7px; float:right;'>
+		        	<!--<select style="text-align: center; margin:0 9px 0 0; border-radius:5px; border:1px solid #d1d1d1;">-->
+		        		<!--<option value="x">全  部</option>-->
+		        		<!--<option value="0">未审核</option>-->
+		        		<!--<option value="1">已通过</option>-->
+		        		<!--<option value="2">未通过</option>-->
+		        	<!--</select>-->
+		        	<!--<a href="/room/add" target="_blank"><i class="glyphicon glyphicon-plus gray" style="margin: 10px 0 0 8px;font-size: 16px;"></i></a>-->
+	        	</div>
+		    </div>
+		    <div class="box-content">
+		    	<table id="roomlist" class="table table-striped table-bordered table-hover bootstrap-datatable responsive">
+				    <thead>
+					    <tr>
+					        <th>昵称</th>
+					        <th>真实姓名</th>
+					        <th>身份证号码</th>
+					        <th>email</th>
+					        <th>手机号码</th>
+					        <th>qq号码</th>
+					        <th>房间名称</th>
+					        <th>房间hash</th>
+					        <th>房间用途</th>
+					        <th>BI 编 码</th>
+					        <th>房间状态</th>
+					        <th>申请时间</th>
+					        <th>操作</th>
+					        <th>审核描述</th>
+					    </tr>
+				    </thead>
+                    <!--<tbody id="alisttody"></tbody>-->
+		    		<tbody id="alisttody">
+		    			<% if (rooms || rooms!=undefined || rooms!='') {%>
+			    			<% for(var i=0; i<rooms.length; i++) {%>
+							    <tr c-id="<%= rooms[i].c_id %>">
+							        <td class="col-md-1 nickname" nickname="<%= rooms[i].nickname%>"><%= rooms[i].nickname || '昵称丢失' %></td>
+							        <td class="col-md-1 realname name" realname="<%= rooms[i].realname%>"><%= rooms[i].realname || '真实姓名丢失' %></td>
+							        <td class="col-md-1 card cardid" card="<%= rooms[i].Idcard%>"><%= rooms[i].Idcard || '身份证号码丢失' %></td>
+							        <td class="col-md-1 email" email="<%= rooms[i].email%>"><%= rooms[i].email || 'email丢失' %></td>
+							        <td class="col-md-1 telphone" telphone="<%= rooms[i].phone%>"><%= rooms[i].phone || '手机号码丢失' %></td>
+							        <td class="col-md-1 qq" qq="<%= rooms[i].qq%>"><%= rooms[i].qq || 'qq号码丢失' %></td>
+							        <td class="col-md-1 roomname" roomname="<%= rooms[i].roomname%>"><%= rooms[i].roomname || '房间名称丢失' %></td>
+							        <td class="col-md-1 roomhash" roomhash="<%= rooms[i].roomhash%>"><%= rooms[i].roomhash || '房间hash丢失' %></td>
+							        <td class="col-md-1 roomdesc" roomdesc="<%= rooms[i].reason%>"><%= rooms[i].reason || '房间用途丢失' %></td>
+							        <td class="col-md-1"><%= rooms[i].c_Branch || ' BI丢失' %></td>
+							        <td class="col-md-1">
+							        	<% if (rooms[i].status==1) {%>已审核
+							            <% } else if (rooms[i].status==0) { %>未审核
+							            <% } else {%>房间状态丢失
+							            <% } %>
+							        </td>
+							        <td class="col-md-1"><%= rooms[i].dateline || '申请时间丢失' %></td>
+							        <td class="col-md-1">
+							        	<% if (rooms[i].status==1) {%>
+							        		<span class="audit-end" style="color: green;">已通过</span>
+							        	<% } else if (rooms[i].status==2) {%>
+								            <button class="btn btn-warning audit">
+								                <i class="glyphicon glyphicon-edit icon-white"></i> 未通过
+								            </button>
+							            <% } else { %>
+								            <button class="btn btn-danger audit">
+								                <i class="glyphicon glyphicon-edit icon-white"></i> 未审核
+								            </button>
+							            <% } %>
+							        </td>
+							        <td class="col-md-1"><%= rooms[i].check_reason || ' --' %></td>
+							    </tr>
+							<% } %>
+						<% } %>
+	    			</tbody>
+	    		</table>
+	    	</div>
+	    	<!--<div id="page" align="right" style="width:97%"></div>-->
+            <div id="Pagination" class="pagination"></div>
+	    </div>
+    <!--/span-->
+	</div>
+</div>
+</div>
+</div>
+ <!--
+ 修改分页js代码
+ -->
+<style type="text/css">
+    @charset "utf-8";
+    .pagination {
+        float: right;
+    }
+
+    .pagination a {
+        text-decoration: none;
+        border: 1px solid #AAE;
+        color: #15B;
+    }
+
+    .pagination a, .pagination span {
+        display: inline-block;
+        padding: 0.1em 0.4em;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .pagination .current {
+        background: #26B;
+        color: #fff;
+        border: 1px solid #AAE;
+    }
+
+    .pagination .current.prev, .pagination .current.next{
+        color:#999;
+        border-color:#999;
+        background:#fff;
+    }
+</style>
+<script type="application/javascript">
+$(function(){
+    var pageIndex = 0;     //页面索引初始值
+
+    InitTable(0);
+
+    $("#Pagination").pagination('<%= total_pages%>', {
+        callback: PageCallback,
+        prev_text: '上一页',       //上一页按钮里text
+        next_text: '下一页',       //下一页按钮里text
+        items_per_page: 10,  //显示条数
+        num_display_entries: 4,    //连续分页主体部分分页条目数
+        current_page: pageIndex,   //当前页索引
+        num_edge_entries: 2        //两侧首尾分页条目数
+    });
+
+    function PageCallback(index, jq) {
+        InitTable(index);
+    }
+
+    function InitTable(pageIndex) {
+
+        var data={};
+
+        data.current_page=pageIndex;
+
+        $.post("/room/auditpageList", data, function(result){
+            var str = '';
+            for (var i=0; i<result.msg.length; i++) {
+            str=str+'<tr c-id="'+result.msg[i].c_id+'">';
+            str=str+'<td class="col-md-1 nickname" nickname="'+ result.msg[i].nickname+'">'+result.msg[i].nickname || "昵称丢失" +'</td>';
+            str=str+'<td class="col-md-1 realname name" realname="'+result.msg[i].realname+'">'+result.msg[i].realname || "真实姓名丢失"+' </td>';
+            str=str+'<td class="col-md-1 card cardid" card="'+result.msg[i].Idcard+'">'+result.msg[i].Idcard || "身份证号码丢失"+'</td>';
+            str=str+'<td class="col-md-1 email" email="'+ result.msg[i].email+'">'+result.msg[i].email || "email丢失" +'</td>';
+            str=str+'<td class="col-md-1 telphone" telphone="'+result.msg[i].phone+'">'+ result.msg[i].phone || "手机号码丢失"+'</td>';
+            str=str+'<td class="col-md-1 qq" qq="'+ result.msg[i].qq+'">'+ result.msg[i].qq || "qq号码丢失" +'</td>';
+            str=str+'<td class="col-md-1 roomname" roomname="'+result.msg[i].roomname+'">'+result.msg[i].roomname || "房间名称丢失" +'</td>';
+            str=str+'<td class="col-md-1 roomhash" roomhash="'+result.msg[i].roomhash+'">'+ result.msg[i].roomhash || "房间hash丢失" +'</td>';
+            str=str+'<td class="col-md-1 roomdesc" roomdesc="'+result.msg[i].reason+'">'+ result.msg[i].reason || "房间用途丢失" +'</td>';
+            str=str+'<td class="col-md-1">'+(result.msg[i].c_Branch || 'BI丢失' )+'</td>';
+            str=str+'<td class="col-md-1">';
+            if (result.msg[i].status==1) {
+             str=str+'已审核';
+            } else if (result.msg[i].status==0) {
+             str=str+'未审核';
+            } else {
+             str=str+'房间状态丢失';
+            }
+             str=str+'</td>';
+             str=str+'<td class="col-md-1">'+result.msg[i].dateline || "申请时间丢失"+'</td>';
+             str=str+'<td class="col-md-1">';
+             if (result.msg[i].status==1) {
+             str=str+'<span class="audit-end" style="color: green;">已通过</span>';
+            } else if (result.msg[i].status==2) {
+             str=str+ '<button class="btn btn-warning audit">';
+             str=str+ '<i class="glyphicon glyphicon-edit icon-white"></i> 未通过</button>';
+             } else {
+             str=str+'<button class="btn btn-danger audit">';
+             str=str+'<i class="glyphicon glyphicon-edit icon-white"></i> 未审核</button>';
+            }
+             str=str+'</td><td class="col-md-1">'+(result.msg[i].check_reason || '--')+'</td></tr>';
+            }
+            $("#alisttody").empty().append(str);
+            $(".audit").click(function () {
+                var sWidth,sHeight;
+                sWidth = screen.width;
+                sHeight = screen.height;
+
+                var bgObj = document.createElement("div");
+                bgObj.setAttribute('id','bgDiv');
+                bgObj.style.width = sWidth + "px";
+                bgObj.style.height = sHeight + "px";
+                document.body.appendChild(bgObj);
+
+                //建的新层
+                var msgObj = document.createElement("div")
+                msgObj.setAttribute("id","msgDiv");
+                msgObj.setAttribute("align","center");
+                msgObj.style.marginTop = -75 + document.documentElement.scrollTop+"px";
+
+                //右上角的关闭按钮
+                var title = document.createElement("h4");
+                title.setAttribute("id","msgTitle");
+                title.setAttribute("align","right");
+                title.innerHTML = "关闭";
+                title.onclick = function(){
+                    document.body.removeChild(bgObj);
+                    document.getElementById("msgDiv").removeChild(title);
+                    document.body.removeChild(msgObj);
+                }
+                var title_close = title.onclick;
+                document.body.appendChild(msgObj);
+                document.getElementById("msgDiv").appendChild(title);
+                var txt = document.createElement("p");
+                txt.setAttribute("id","msgTxt");
+                var user_info = {};
+                user_info.cardid = $(this).parents('td').siblings('.cardid').attr('card');
+                user_info.name = $(this).parents('td').siblings('.name').attr('realname');
+                var index = $(this);
+                console.log('userinfo ----------> ', user_info);
+                $.post("/room/cardid", user_info, function(res){
+                    var userinfo = JSON.parse(res);
+                    console.log(res);
+                    txt.innerHTML = '<fieldset>\
+	                        	<input id="c_id" type="hidden" name="c_id" value="'+ (index.parents('tr').attr('c-id') || '') + '"/>\
+	                        	<input id="nickname" type="hidden" name="nickname" value="'+ (index.parents('td').siblings('.nickname').attr('nickname') || '') + '"/>\
+	                        	<input id="realname" type="hidden" name="realname" value="'+ (index.parents('td').siblings('.realname').attr('realname') || '') + '"/>\
+	                        	<input id="card" type="hidden" name="card" value="'+ (index.parents('td').siblings('.card').attr('card') || '') + '"/>\
+	                        	<input id="email" type="hidden" name="email" value="'+ (index.parents('td').siblings('.email').attr('email') || '') + '"/>\
+	                        	<input id="telphone" type="hidden" name="telphone" value="'+ (index.parents('td').siblings('.telphone').attr('telphone') || '') + '"/>\
+	                        	<input id="qq" type="hidden" name="qq" value="'+ (index.parents('td').siblings('.qq').attr('qq') || '') + '"/>\
+	                        	<input id="room_name" type="hidden" name="room_name" value="'+ (index.parents('td').siblings('.roomname').attr('roomname') || '') + '"/>\
+	                        	<input id="room_hash" type="hidden" name="room_hash" value="'+ (index.parents('td').siblings('.roomhash').attr('roomhash') || '') + '"/>\
+	                        	<input id="room_desc" type="hidden" name="room_hash" value="'+ (index.parents('td').siblings('.roomdesc').attr('roomdesc') || '') + '"/>\
+	                        	<br />\
+	                        	<div class="center col-md-8">\
+		                            <div class="input-group input-group-md ">\
+		                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 身份验证</span>\
+		                                <span class="form-control">' + (userinfo.status !=0 ?userinfo.message: '程序内部错误') +'</span>\
+		                            </div><br />\
+		                            <div class="input-group input-group-md ">\
+		                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 审核操作</span>\
+		                                <select id="room_status" name="c_forward" class="form-control">\
+									   		<option value="1"> 通过 </option>\
+									   		<option value="2"> 未通过 </option>\
+										</select>\
+		                            </div><br />\
+		                            <div class="input-group input-group-md">\
+		                                <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 审核描述</span>\
+		                                <input id="check_reason" type="text" name="check_reason" class="form-control"/>\
+		                            </div><br />\
+		                            <p class="center col-md-5">\
+		                                <button id="auditform" class="btn btn-md btn-primary">提 交</button>\
+		                            </p>\
+		                        </div>\
+	                        </fieldset>';
+
+                    document.getElementById("msgDiv").appendChild(txt);
+                    var audit_end=index.parent('td');
+                    var audit_desc=index.parent('td').siblings('.audit_desc');
+                    $("#auditform").click(function(res) {
+                        var data = {};
+                        data.room_hash = $("#room_hash").val();
+                        data.room_status = $("#room_status").val();
+                        data.check_reason = $("#check_reason").val();
+                        data.c_id = $("#c_id").val();
+                        data.nickname = $("#nickname").val();
+                        data.realname = $("#realname").val();
+                        data.card = $("#card").val();
+                        data.email = $("#email").val();
+                        data.telphone = $("#telphone").val();
+                        data.qq = $("#qq").val();
+                        data.room_name = $("#room_name").val();
+                        data.room_desc = $("#room_desc").val();
+                        $.post("/room/audit", data,function(res){
+                            var result = res;
+                            if (result=='nickname_err') {
+                                alert('昵称不存在，请联系管理员');
+                                return false;
+                            } else if (result=='freeroom_err') {
+                                alert('审核失败，请联系管理员');
+                                return false;
+                            } else if (result=='fail') {
+                                alert('审核失败，请联系管理员');
+                                return false;
+                            } else if (result=='ok') {
+                                audit_end.html('<span class="audit-end" style="color: green;">已通过</span>');
+                                audit_desc.html('<span class="audit-end">' + data.check_reason + '</span>');
+                                alert('审核成功');
+                                return true;
+                            } else if (result=='exist') {
+                                alert('房间已存在');
+                                return false;
+                            } else if (result=='check_no') {
+                                audit_end.html('<button class="btn btn-warning audit"><i class="glyphicon glyphicon-edit icon-white"></i> 未通过</button>');
+                                audit_desc.html('<span class="audit-end">' + data.check_reason + '</span>');
+                                alert('审核结束');
+                                return false;
+                            } else {
+                                alert('未知错误');
+                                return false;
+                            }
+                        });
+
+                        title_close();
+                    });
+                });
+            });
+            return true;
+        });
+    }
+});
+</script>
+<script type="text/javascript">
+//	$(document).ready(function () {
+//		var page_num = Math.ceil('<%= total_pages/10 %>');
+//		if (page_num > 1) {
+//			var current_page = '<%= current_page%>';
+//			var page_head = '';
+//			var page_middle = '';
+//			var page_tail = '';
+//			if (current_page == 1) {
+//				page_head = '首页 >'
+//			} else {
+//				page_head = '<a href="/room/auditlist">首页 </a> >'
+//			}
+//			if (current_page > page_num/2 && current_page != page_num) {
+//				page_middle = ' <a href="/room/auditlist">1</a> > <a href="/room/auditlist?current_page=2">2</a> > ...... > <a href="/room/auditlist?current_page=' + (parseInt(current_page)-1) +'">' + (parseInt(current_page)-1) + '</a> > ' + parseInt(current_page) + ' > >' + '<a href="/room/auditlist?current_page=' + (parseInt(current_page)+1) +'">' + (parseInt(current_page)+1) + '</a> > ... ';
+//			} else if ((current_page < page_num/2) && (current_page !=1)){
+//				page_middle = '... ' + ' > <a href="/room/auditlist?current_page=' + (parseInt(current_page) - 1 ) +'">' + (parseInt(current_page) - 1 ) + '</a> ' + '> ' + current_page +' > <a href="/room/auditlist?current_page=' + (parseInt(current_page) + 1 ) +'">' + (parseInt(current_page) + 1 ) + '</a> ' + ' > ...... > <a href="/room/auditlist?current_page=' + (parseInt(page_num)-1) +'">' + (parseInt(page_num)-1) + '</a> > <a href="/room/auditlist?current_page=' + parseInt(page_num) + '">' + parseInt(page_num) + '</a> ';
+//			} else if (current_page == 1 || current_page == page_num) {
+//				page_middle = ' <a href="/room/auditlist">1</a> > <a href="/room/auditlist?current_page=2">2</a> > ...... > <a href="/room/auditlist?current_page=' + (page_num-1) + '">' + (page_num-1) + '</a> > <a href="/room/auditlist?current_page=' + page_num + '">' + page_num + '</a> ';
+//			}
+//			if (current_page == page_num) {
+//				page_tail = ' > 尾页'
+//			} else {
+//				page_tail = ' > <a href="/room/auditlist?current_page=' + page_num + '">尾页 </a>'
+//			}
+//
+//			str = page_head + page_middle + page_tail;
+//			$('#page').html(str);
+//		}
+//	});
+</script>
+
+<style type="text/css">
+	#msgDiv{
+		background:white;
+		position:absolute;
+		left:50%;
+		top:50%;
+		margin-left:-225px;
+		width:400px;
+		height:250px;
+		textAlign:center;
+		lineHeight:25px;
+		z-index  :100;
+	}
+
+	#msgTitle{
+		margin:0;
+		padding:3px;
+		background: #428bca;
+		filter:progid:DXImageTransform.Microsoft.Alpha(startX=20, startY=20, finishX=100, finishY=100,style=1,opacity=75,finishOpacity=100);
+		opacity:0.75;
+		color:white;
+		cursor:pointer;
+	}
+
+	#bgDiv{
+		position:absolute;
+		top:0;
+		background:#000;
+		filter:progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75);
+		opacity:0.5;
+		left:0;
+		z-index  :2;
+	}
+</style>

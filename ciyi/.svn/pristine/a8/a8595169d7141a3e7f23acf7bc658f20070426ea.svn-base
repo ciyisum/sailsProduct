@@ -1,0 +1,359 @@
+<% include ../navigation %>
+<div class="ch-container">
+    <% include ../sidebar %>
+    <div id="content" class="col-lg-10 col-sm-10">
+        <div>
+            <ul class="breadcrumb">
+                <li><a href="/">主页</a></li>
+                <li><a href="/platform/GetAddAdPage">广告添加</a></li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>广告信息</h2>
+                    </div>
+                    <div class="submit_top"></div>
+                    <% if (error) { %>
+                    <div class="center alert alert-danger ">
+                        <div><span class="ng-binding ng-scope"><%= error %></span></div>
+                    </div>
+                    <% } %>
+                    <% if (success) { %>
+                    <div class="center alert alert-success">
+                        <div><span class="ng-binding ng-scope"><%= success %></span></div>
+                    </div>
+                    <% } %>
+                    <div class="box-content">
+                        <form id="adinfo" class="form-horizontal" role="form" action="#" method="post"
+                              enctype="multipart/form-data">
+                            <input id="c_hash" name="c_hash" type="hidden"/>
+                            <fieldset>
+                                <br/>
+
+                                <div class="center col-md-8">
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 广告标题</span>
+                                        <input id="c_ad_name" name="c_ad_name" type="text" class="form-control">
+                                    </div>
+                                    <br/>
+
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock red"></i> 广告类型</span>
+                                        <select id="c_ad_type" name="c_ad_type" class="form-control">
+                                            <option value="1" selected="selected">单开启</option>
+                                            <option value="2">多开启</option>
+                                        </select>
+                                    </div>
+                                    <br/>
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 广告背景</span>
+                                        <input id="c_ad_bg" name="c_ad_bg" type="text" class="form-control">
+                                    </div>
+                                    <br/>
+                                    <div class="input-group input-group-md ">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 广告位置</span>
+                                        <select id="c_ad_seat" name="c_ad_seat" class="form-control">
+                                            <option value="1">喇叭区</option>
+                                            <option value="2">轮播图</option>
+                                            <option value="3">公聊区</option>
+                                            <option value="4">跑马灯</option>
+                                            <option value="5">0佣金</option>
+                                            <option value="6">网页端</option>
+                                        </select>
+                                    </div>
+                                    <br/>
+
+                                    <div class="input-group input-group-md ">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 广告内容</span>
+                                        <input id="c_ad_context" name="c_ad_context" type="text" class="form-control">
+                                    </div>
+                                    <br/>
+
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 跳转连接</span>
+                                        <input id="c_skip_url" name="c_skip_url" type="text" class="form-control">
+                                    </div>
+                                    <br/>
+
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 上传广告</span>
+                                        <input id="c_ad_url" name="c_ad_url" type="text" readonly="readonly"
+                                               class="form-control c_ad_url">
+
+                                        <div id="flashContent">
+                                            <p>
+                                                To view this page ensure that Adobe Flash Player version
+                                                11.4.0 or greater is installed.
+                                            </p>
+                                            <script type="text/javascript">
+                                                var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://");
+                                                document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='"
+                                                        + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>");
+                                            </script>
+                                        </div>
+                                        <noscript>
+                                            <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%"
+                                                    height="100%" id="ImageUpload" name="{application}">
+                                                <param name="movie" value="../ad/ImageUpload.swf"/>
+                                                <param name="quality" value="high"/>
+                                                <param name="bgcolor" value="#ffffff"/>
+                                                <param name="allowScriptAccess" value="sameDomain"/>
+                                                <param name="allowFullScreen" value="true"/>
+                                                <!--[if !IE]>-->
+                                                <object type="application/x-shockwave-flash"
+                                                        data="../ad/ImageUpload.swf" width="100%" height="100%"
+                                                        id="ImageUpload" name="{application}">
+                                                    <param name="quality" value="high"/>
+                                                    <param name="bgcolor" value="#ffffff"/>
+                                                    <param name="allowScriptAccess" value="sameDomain"/>
+                                                    <param name="allowFullScreen" value="true"/>
+                                                    <!--<![endif]-->
+                                                    <!--[if gte IE 6]>-->
+                                                    <p>
+                                                        Either scripts and active content are not permitted to run or
+                                                        Adobe Flash Player version
+                                                        11.4.0 or greater is not installed.
+                                                    </p>
+                                                    <!--<![endif]-->
+                                                    <a href="http://www.adobe.com/go/getflashplayer">
+                                                        <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"
+                                                             alt="Get Adobe Flash Player"/>
+                                                    </a>
+                                                    <!--[if !IE]>-->
+                                                </object>
+                                                <!--<![endif]-->
+                                            </object>
+                                        </noscript>
+                                        <!--<a href="#" id="clear_ad">刷新</a>-->
+                                    </div>
+                                    <br/>
+
+                                  <!--  <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-bookmark red"></i> 启用状态</span>
+                                        <select id="c_ad_status" name="c_ad_status" class="form-control">
+                                            <option value="1" selected="selected">开启</option>
+                                            <option value="2">不开启</option>
+                                        </select>
+                                    </div>-->
+                                    <br/>
+
+                                    <p class="center col-md-5">
+                                        <input type="submit" id="zj_ad_submit" class="btn btn-md btn-primary"
+                                               value="提 交"/>
+                                    </p>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<style type="text/css" media="screen">
+    .c_ad_url {
+        width: 83% !important;
+    }
+</style>
+<script type="text/javascript">
+    var swfVersionStr = "11.4.0";
+    var xiSwfUrlStr = "playerProductInstall.swf";
+    var flashvars = {};
+    var params = {};
+    params.quality = "high";
+    params.bgcolor = "#ffffff";
+    params.allowscriptaccess = "sameDomain";
+    params.allowfullscreen = "true";
+    var attributes = {};
+    attributes.id = "ImageUpload";
+    attributes.name = "ImageUpload";
+    attributes.align = "middle";
+    params.flashvars = "autoupload=false&img=background:../ad/button.png&keyurl=http://upimg.mfstatic.com/checkupfile?uid=*&uid=aaa&size=1&type=*.jpg,*.jpeg,*.gif,*.png&url=http://upimg.mfstatic.com/upload1&label=图片上传&labelcolor=0xff0000&w=100&h=30&callBack=onUploadError:onUploadError,onLog:onLog,onComp:onComp";
+    swfobject.embedSWF(
+            "../ad/ImageUpload.swf", "flashContent",
+            "100", "30",
+            swfVersionStr, xiSwfUrlStr,
+            flashvars, params, attributes);
+    swfobject.createCSS("#flashContent", "display:block;text-align:left;");
+
+    /*******推送rtmp接口示例*******/
+    /**************************/
+
+    IS_CONSOLE_LOG = true;//是否打印日志信息
+
+    /*
+     Script 提供的回调接口,swf在请求数据过程中会产生以下几种状态
+     1、onInit 上传组件初始化完成
+     2、onCUpload 当前正在进行图片上传
+     3、onSelect 选中上传文件
+     4、onIoError 上传IO错误
+     5、onSecurityError 上次策略文件错误
+     6、onProgress 文件上传进度
+     7、onLog 调试函数
+     8、onComp 图片上传完毕
+     9、onError 上传过程中引起的其他错误
+     10、onFileSize 当选择的文件大小超过设定的大小时执行该回调
+     11、onInvalidFile 当选择无效文件时候回调该函数
+     12、onUploadError 文件上传失败
+     13、startUpload 当设置为不自动上传时，通过调用该函数开始上传文件
+     14、noSelected 当设置为不自动上传文件时，没有选择文件或者传递网络地址就调用startUpload函数时候返回的错误
+     15、cancelFileState 取消标识的文件状态，可以用于继续上传文件
+     以下为swf回调示例
+     */
+//    function onInit(value, objectID) {
+//        $("#clear_ad").hide();
+//    }
+    function onCUpload(value, objectID) {
+        console.log("function onCUpload " + value);
+        onLog(value, objectID);
+    }
+
+//    function onSelect(value, objectID) {
+//        $('#c_ad_url').val(value);
+//        $("#clear_ad").show();
+//    }
+
+    function onIoError(value, objectID) {
+        console.log("function onIoError " + value);
+        onLog(value, objectID);
+    }
+
+    function onSecurityError(value, objectID) {
+        console.log("function onSecurityError " + value);
+
+        onLog(value, objectID);
+    }
+
+    function onError(value, objectID) {
+        console.log("function onError " + value);
+
+        onLog(value, objectID);
+    }
+
+    function onProgress(value, objectID) {
+        console.log("function onProgress " + value);
+
+        onLog(value, objectID);
+    }
+
+    function onLog(value, objectID) {
+        // alert(value + ":" + objectID);
+        // message = decodeURIComponent(message);
+        var log = "log " + objectID + " " + value;
+        if (IS_CONSOLE_LOG) console.log(log);
+    }
+
+    function onComp(value, objectID) {
+        console.log("function onComp " + value);
+        var top=value.indexOf('_');
+        var end = value.substring(top+1);
+        $('#c_ad_url').val(value+'0_123x123_p.'+end);
+    }
+
+    function onFileSize(value, objectID) {
+        // alert(value);
+        console.log("function onFileSize " + value);
+
+        onLog(value, objectID);
+    }
+
+    function onInvalidFile(value, objectID) {
+        console.log("function onInvalidFile " + value);
+
+        onLog(value, objectID);
+    }
+
+    function onUploadError(value, objectID) {
+        console.log("function onUploadError " + value);
+
+        onLog(value, objectID);
+    }
+
+    /*Script 提供的回调接口*/
+
+    ////////////////////////////////////////////////////////
+    /**flash 对外提供的交互接口*/
+    /*
+     1、__netUpload 上传网络图片
+     */
+
+    /*getSwf  获取swf对象*/
+    function getSwf() {
+        return document.ImageUpload;
+    }
+    // 上传网络图片
+    function netUpload() {
+        var netSrc = text.value;
+        // var width = text1.value;
+        // var height = text2.value;
+        getSwf().__netUpload(netSrc);
+        // getSwf().__netUpload(netSrc, width, height);
+    }
+
+    function netUpload2() {
+        var netSrc = text2.value;
+        // var width = text1.value;
+        // var height = text2.value;
+        getSwf().__netUpload(netSrc);
+        // getSwf().__netUpload(netSrc, width, height);
+    }
+
+    function startUpload(ad_info) {
+        getSwf().startUpload()
+    }
+
+    function cancelFileState() {
+        getSwf().cancelFileState();
+        $('#c_ad_url').val('');
+        $("#clear_ad").hide();
+    }
+
+    function noSelected(value, objectID) {
+        onLog(value, objectID, 'noSelected');
+    }
+
+    $("#clear_ad").click(cancelFileState);
+    /**
+     * 提交页面信息
+     ***/
+    $("#zj_ad_submit").click(function(){
+        var c_ad_name=$("#c_ad_name").val();
+        var c_ad_type=$("#c_ad_type").val();
+        var c_ad_seat=$("#c_ad_seat").val();
+        var c_ad_context=$("#c_ad_context").val();
+        var c_skip_url=$("#c_skip_url").val();
+        var c_ad_url=$("#c_ad_url").val();
+        var c_ad_bg=$("#c_ad_bg").val();
+        var ad_info={};
+        ad_info.ad_name=c_ad_name;
+        ad_info.ad_type=c_ad_type;
+        ad_info.ad_seat=c_ad_seat;
+        ad_info.ad_content=c_ad_context;
+        ad_info.ad_skip_url=c_skip_url;
+        ad_info.ad_url=c_ad_url;
+        ad_info.ad_bg_color=c_ad_bg;
+        if(!c_ad_url || !c_ad_name || !c_ad_type || !c_ad_seat || !c_skip_url){
+            alert('请填写完整信息!')
+            return false;
+        }
+        if(2==+c_ad_type){
+            if(c_ad_type !=c_ad_seat){
+                alert('请选择正确的匹配类型!')
+                return false;
+            }
+        }
+        $.post('/platform/AddAdInfo', ad_info, function (result) {
+            if('ok'==result.status){
+                window.location.href='/platform/GetAdInfo'
+            }else{
+            var st=' <div class="center alert alert-danger "><div><span class="ng-binding ng-scope">提交失败</span></div></div>'
+            $('.submit_top').html(st);
+            }
+        });
+        return false;
+    })
+</script>

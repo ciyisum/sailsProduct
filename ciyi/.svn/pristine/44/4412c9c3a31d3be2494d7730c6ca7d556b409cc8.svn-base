@@ -1,0 +1,684 @@
+<%include ../navigation%>
+<div class="ch-container">
+	<% include ../sidebar%>
+        <div id="content" class="col-lg-10 col-sm-10">
+        	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="/">主页</a></li>
+		            <li><a href="/room/index">房间列表</a></li>
+		        </ul>
+		    </div>
+    	<div class="row">
+		    <div class="box col-md-12">
+		    <div class="box-inner">
+		    <div class="box-header well" style='padding-top:0'>
+		        <h2 style='margin-top:5px;'><i class="glyphicon glyphicon-user"> 房间列表</i></h2>
+	        	<!-- <form id="search_form" action="/room/search" method="post"> -->
+		        	<div class="input-group input-group-md" align="right" style='margin-top:-2px; float:right;'>
+			        	<input id="isearch" type="text" style="text-align: center; margin:0 9px 0 0; border-radius:5px; border:1px solid #d1d1d1;">
+			        	<i class="glyphicon glyphicon-search gray" id="search" style="margin-top:11px; font-size:15px;"></i>
+			        	<a href="/room/add" target="_blank"><i class="glyphicon glyphicon-plus gray" style="margin: 10px 0 0 8px;font-size: 16px;"></i></a>
+		        	</div>
+	        	<!-- </form> -->
+		    </div>
+		    <div class="box-content">
+		    	<table id="roomlist" class="table table-striped table-bordered table-hover bootstrap-datatable responsive">
+				    <thead>
+					    <tr>
+					        <th>房间名称</th>
+					        <th>房间类型</th>
+					        <th>转播关系</th>
+					        <th>密码</th>
+					        <th>大区</th>
+					        <th>业务类型</th>
+					        <th>房主</th>
+					        <th>业务组ID</th>
+					        <th>营业部管理员ID</th>
+					        <th>营业部ID</th>
+					        <th>状态</th>
+					        <th>操作</th>
+					    </tr>
+				    </thead>
+				    <tbody id="listbody">
+				    </tbody>
+	    		</table>
+				<div id="Pagination" class="pagination">
+				</div>
+	    	</div>
+	    </div>
+    <!--/span-->
+	</div>
+</div>
+</div>
+</div>
+<style type="text/css">
+@charset "utf-8";
+.pagination {
+	float: right;
+}
+
+.pagination a {
+    text-decoration: none;
+	border: 1px solid #AAE;
+	color: #15B;
+}
+
+.pagination a, .pagination span {
+    display: inline-block;
+    padding: 0.1em 0.4em;
+    margin-right: 5px;
+	margin-bottom: 5px;
+}
+
+.pagination .current {
+    background: #26B;
+    color: #fff;
+	border: 1px solid #AAE;
+}
+
+.pagination .current.prev, .pagination .current.next{
+	color:#999;
+	border-color:#999;
+	background:#fff;
+}
+</style>
+
+<script type="text/javascript">
+	$("#isearch").bind("keydown",function(e){
+		if(e.which==13){
+			e.preventDefault();
+			$("#search").trigger("click");
+		}	
+	});
+
+	$("#search").click(function () {
+		var data = {};
+		data.search = $(this).siblings('input').val();
+	  	$.post("/room/search", data, function(result){
+	  		console.log(result.msg);
+	  		if (!result.msg || result.msg.length ==0) {
+	  			alert('没有相关数据，请重新输入查询条件');
+	  			return false;
+	  		}
+	  		var str = '' ;
+	  		for (var i=0; i<result.msg.length; i++) {
+				str = str + '<tr c-id="' + result.msg[i].c_id + '"><td class="col-md-1 roomname">' + result.msg[i].c_chatroom_name + '</td><td class="col-md-1 roomtype1">';
+				if (result.msg[i].c_code == 1) {
+					str = str + '<span class="roomtype1" value="1">主房间</span>';
+				} else if (result.msg[i].c_code == 2) {
+					str = str + '<span class="roomtype1" value="2">转播房间</span>';
+				} else {
+					str = str + '<span class="roomtype1" value="0">无</span>';
+				}
+				str = str + '<span class="roomtype2" style="display:none;"><select class="form-control"><option value="1" selected="">主房间</option><option value="2">转播房间</option></select></span></td>';
+				str = str + '<td class="col-md-2 roomforward1"><span class="roomforward1" value="' + result.msg[i].c_forward + '">' + result.msg[i].c_forward_name + '</span><span class="roomforward2" style="display:none;"><select class="form-control roomforward2"></select></span></td>';
+				var password = result.msg[i].c_roompassword == "" ? '无': result.msg[i].c_roompassword;
+				str = str + '<td class="col-md-1 roompass">' + password  + '</td>';
+				str = str + '<td class="col-md-1 roomregion1"><span class="roomregion1" value="' + result.msg[i].c_region + '">' + result.msg[i].c_region_name + '</span><span class="roomregion2" style="display:none;"><select class="form-control roomregion2"></select></span></td>';
+				var business = '';
+	        	if (result.msg[i].c_business == 1) {
+	        		business = '商品';
+	        	} else if (result.msg[i].c_business == 2) {
+	        		business = '基金';
+	        	} else if (result.msg[i].c_business == 3) {
+	        		business = 'H股';
+	        	} else if (result.msg[i].c_business == 4) {
+	        		business = '证券';
+	        	} else if (result.msg[i].c_business == 5) {
+	        		business = '汇银';
+	        	} else if (result.msg[i].c_business == 6) {
+	        		business = '华融';
+	        	}else if (result.msg[i].c_business == 7) {
+                    business = '新华融';
+                }else if (result.msg[i].c_business == 8) {
+                    business = '银创';
+                }else if (result.msg[i].c_business == 9) {
+                    business = '广贵';
+                }else {
+	        		business = '无';
+	        	}
+				str = str + '<td class="col-md-1 roombusiness1"><span class="roombusiness1" value="'+result.msg[i].c_business+'">' + business + '</span><span class="roombusiness2" style="display:none;"><select class="form-control"><option value="0" selected="">无</option><option value="1">商品</option><option value="2">基金</option><option value="3">H股</option><option value="4">证券</option><option value="5">汇银</option><option value="6">华融</option><option value="7">新华融</option><option value="8">银创</option><option value="9">广贵</option></select></span></td>';
+				str = str + '<td class="col-md-1 c_ownername">' + result.msg[i].c_ownername + '<td class="col-md-1 c_Branch">' + result.msg[i].c_Branch + '</td></td><td class="col-md-2 department_id">' + result.msg[i].department_id + '</td>';
+
+                str=str+'<td class="col-md-1 dep_id">'+result.msg[i].c_dep+'</td>'
+				str = str + '<td class="col-md-2 roomstatus1">';
+
+				if (result.msg[i].c_status == 0) {
+					str = str + '<span class="roomstatus1" value="0">未开通</span>';
+				} else if (result.msg[i].c_status == 1) {
+					str = str + '<span class="roomstatus1" value="1">开通</span>';
+				} else {
+					str = str + '房间状态丢失';
+				}
+				str = str + '<span class="roomstatus2" style="display:none;"><select class="form-control"><option value="1" selected="selected">开通</option><option value="0">未开通</option></select></span></td>';
+
+				str = str + '<td class="col-md-1" style="position:relative;"><button class="btn btn-info edit"><i class="glyphicon glyphicon-edit icon-white"></i> 编辑</button><button class="btn btn-success save" style="display:none;"><i class="glyphicon glyphicon-edit icon-white"></i> 保存</button></div></td>';
+	  		}
+			// $(".content").html(str);
+			$("#listbody").empty().append(str);
+			$('#page').css('display','none');
+			$(".edit").click(function() {
+				$(this).siblings('.save').css('display','inline-block');
+				$(this).css('display', 'none');
+				var roomname=$(this).parents('td').siblings('.roomname');
+				var roompass=$(this).parents('td').siblings('.roompass');
+				var roomstatus1=$(this).parents('td').siblings('.roomstatus1');
+				var roomtype1=$(this).parents('td').siblings('.roomtype1');
+				var roombusiness1=$(this).parents('td').siblings('.roombusiness1');
+				var roomforward1=$(this).parents('td').siblings('.roomforward1');
+				var roomregion1=$(this).parents('td').siblings('.roomregion1');
+				var c_ownername=$(this).parents('td').siblings('.c_ownername');
+				var c_Branch=$(this).parents('td').siblings('.c_Branch');
+				var department_id=$(this).parents('td').siblings('.department_id');
+				var dep_id=$(this).parents('td').siblings('.dep_id');
+                //td-->dep_id
+                dep_id.attr('contenteditable', 'true');
+                dep_id.css('background-color', '#9DE3EC');
+                dep_id.css('-webkit-box-shadow', '#666 0px 0px 10px');
+				//td-->department_id
+				department_id.attr('contenteditable', 'true');
+				department_id.css('background-color', '#9DE3EC');
+				department_id.css('-webkit-box-shadow', '#666 0px 0px 10px');
+				//td-->roomname
+				roomname.attr('contenteditable', 'true');
+				roomname.css('background-color', '#9DE3EC');
+				roomname.css('-webkit-box-shadow', '#666 0px 0px 10px');
+				//td-->c_ownername
+				c_ownername.attr('contenteditable', 'true');
+				c_ownername.css('background-color', '#9DE3EC');
+				c_ownername.css('-webkit-box-shadow', '#666 0px 0px 10px');
+				//td-->roompass
+				roompass.attr('contenteditable', 'true');
+				roompass.css('background-color', '#9DE3EC');
+				roompass.css('-webkit-box-shadow', '#666 0px 0px 10px');
+				//td-->roomstatus1
+				roomstatus1.css('background-color', '#9DE3EC');
+				roomstatus1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+				roomstatus1.find('.roomstatus1').css('display', 'none');
+				roomstatus1.find('.roomstatus2').css('display', 'inline-block');
+				roomstatus1.find('.roomstatus2 .form-control').val(roomstatus1.find('.roomstatus1').attr("value"));
+				//td-->roomtype1
+				roomtype1.css('background-color', '#9DE3EC');
+				roomtype1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+				roomtype1.find('.roomtype1').css('display', 'none');
+				roomtype1.find('.roomtype2').css('display', 'inline-block');
+				roomtype1.find('.roomtype2 .form-control').val(roomtype1.find('.roomtype1').attr("value"));
+				//td-->roombusiness1
+				roombusiness1.css('background-color', '#9DE3EC');
+				roombusiness1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+				roombusiness1.find('.roombusiness1').css('display', 'none');
+				roombusiness1.find('.roombusiness2').css('display', 'inline-block');
+                roombusiness1.find('.roombusiness2 .form-control').val(roombusiness1.find('.roombusiness1').attr("value"));
+				//td-->c_Branch
+				c_Branch.attr('contenteditable', 'true');
+				c_Branch.css('background-color', '#9DE3EC');
+				c_Branch.css('-webkit-box-shadow', '#666 0px 0px 10px');
+				c_Branch.find('.c_Branch').css('display', 'none');
+				c_Branch.find('.c_Branch').css('display', 'inline-block');
+				$.post("/room/edit", function(res){
+					//td-->roomforward1
+					roomforward1.css('background-color', '#9DE3EC');
+					roomforward1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					roomforward1.find('.roomforward1').css('display', 'none');
+					roomforward1.find('.roomforward2').css('display', 'inline-block');
+                    $(".roomforward2 select option").remove();
+					$("<option value='' selected>无</option>").appendTo($(".roomforward2 select"));
+					for (var i=0; i<res.mainroom.length; i++) {
+						$("<option value='" + res.mainroom[i].c_hash + "'>" + res.mainroom[i].c_chatroom_name + "</option>").appendTo($(".roomforward2 select"));
+					}
+					roomforward1.find('.roomforward2 .form-control').val(roomforward1.find('.roomforward1').attr("value"));
+					roomregion1.css('background-color', '#9DE3EC');
+					roomregion1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					roomregion1.find('.roomregion1').css('display', 'none');
+					roomregion1.find('.roomregion2').css('display', 'inline-block');
+                    $(".roomregion2 select option").remove();
+                    $("<option value='0' selected>无</option>").appendTo($(".roomregion2 select"));
+					for (var i=0; i<res.region.length; i++) {
+						$("<option value='" + res.region[i].c_id + "'>" + res.region[i].c_name + "</option>").appendTo($(".roomregion2 select"));
+					}
+					roomregion1.find('.roomregion2 .form-control').val(roomregion1.find('.roomregion1').attr("value"));
+			  	});
+				return false;
+			});
+			$(".save").click(function () {
+				var index=$(this);
+
+				var roomname=$(this).parents('td').siblings('.roomname');
+				var roompass=$(this).parents('td').siblings('.roompass');
+				var roomstatus1=$(this).parents('td').siblings('.roomstatus1');
+				var roomtype1=$(this).parents('td').siblings('.roomtype1');
+				var roombusiness1=$(this).parents('td').siblings('.roombusiness1');
+				var roomforward1=$(this).parents('td').siblings('.roomforward1');
+				var roomregion1=$(this).parents('td').siblings('.roomregion1');
+				var c_ownername=$(this).parents('td').siblings('.c_ownername');
+				var c_Branch=$(this).parents('td').siblings('.c_Branch');
+				var department_id=$(this).parents('td').siblings('.department_id');
+				var dep_id=$(this).parents('td').siblings('.dep_id');
+
+				var data={};
+				data.c_id=$(this).parents('tr').attr('c-id');
+				if (!roomname.text() || roomname.text() == '') {
+					alert('房间名称不能为空');
+					return false;
+				}
+				data.c_chatroom_name=(roomname.text()).trim();
+				if (!roompass.text() || roompass.text() != '无') {
+					data.c_roompassword=roompass.text();
+				}
+				data.c_status=roomstatus1.find('.roomstatus2 .form-control').val();
+				data.c_code=roomtype1.find('.roomtype2 .form-control').val();
+				data.c_business=roombusiness1.find('.roombusiness2 .form-control').val();
+				data.c_forward=roomforward1.find('.roomforward2 .form-control').val();
+				data.c_region=roomregion1.find('.roomregion2 .form-control').val();
+				data.c_Branch=c_Branch.text();
+				data.department_id=department_id.text();
+                data.c_dep=dep_id.text();
+                roombusiness1.find('.roombusiness1').attr("value",data.c_business);
+                roomforward1.find('.roomforward1').attr("value",data.c_forward);
+                roomregion1.find('.roomregion1').attr("value",data.c_region);
+                if(!data.c_dep){
+                    alert("营业部ID不能为空");
+                    return false;
+                }
+				if(isNaN(data.department_id)){
+				   alert("营业部管理员ID为数字");
+				   return false;
+				}
+				if (!c_ownername.text() || c_ownername.text() == '') {
+					alert('房主不能为空');
+					return false;
+				}
+				data.c_ownername=c_ownername.text();
+                if(!!isNaN(+data.c_Branch) || parseInt(data.c_Branch)<=0){
+                    alert('请输入正确的业务组ID！');
+                    return false;
+                }
+                if(!!isNaN(+data.department_id) || parseInt(data.department_id)<=0){
+                    alert('请输入正确的营业部管理员ID！');
+                    return false;
+                }
+                if(!!isNaN(+data.c_dep) || parseInt(data.c_dep)<=0){
+                    alert('请输入正确的营业部ID！');
+                    return false;
+                }
+
+			  	$.post("/room/update", data, function(result){
+			  		if (result.status=='fail' && result.msg=='err_args') {
+			  			alert('请完成填写更新信息');
+			  			return false;
+			  		}
+			  		if (result.status=='fail' && result.msg=='nickname_err') {
+			  			alert('房主昵称不存在');
+			  			return false;
+			  		}
+                    if (result.status=='fail' && result.msg=='department_id_err') {
+                        alert('请输入正确的营业部管理员ID！');
+                        return false;
+                    }
+			  		if (result.status=='ok') {
+
+						alert('更新数据成功');
+
+						index.siblings('.edit').css('display','inline-block');
+						index.css('display', 'none');
+						roomstatus1.find('.roomstatus1').html(roomstatus1.find('.roomstatus2 .form-control').find('option:selected').text() || '无');
+						roomtype1.find('.roomtype1').html(roomtype1.find('.roomtype2 .form-control').find('option:selected').text() || '无');
+						roombusiness1.find('.roombusiness1').html(roombusiness1.find('.roombusiness2 .form-control').find('option:selected').text() || '无');
+						roomforward1.find('.roomforward1').html(roomforward1.find('.roomforward2 .form-control').find('option:selected').text() || '无');
+						roomregion1.find('.roomregion1').html(roomregion1.find('.roomregion2 .form-control').find('option:selected').text() || '无');
+                        //td-->dep_id
+                        dep_id.attr('contenteditable', null);
+                        dep_id.removeAttr('style');
+						//td-->department_id
+						department_id.attr('contenteditable', null);
+						department_id.removeAttr('style');
+						//td-->regionname
+						roomname.attr('contenteditable', null);
+						roomname.removeAttr('style');
+						//td-->c_ownername
+						c_ownername.attr('contenteditable', null);
+						c_ownername.removeAttr('style');
+						//td-->roomstatus1
+						roomstatus1.removeAttr('style');
+						roomstatus1.find('.roomstatus1').css('display', 'inline-block');
+						roomstatus1.find('.roomstatus2').css('display', 'none');
+						//td-->roompass
+						roompass.attr('contenteditable', null);
+						roompass.removeAttr('style');
+						//td-->roomtype1
+						roomtype1.removeAttr('style');
+						roomtype1.find('.roomtype1').css('display', 'inline-block');
+						roomtype1.find('.roomtype2').css('display', 'none');
+						//td-->roombusiness1
+						roombusiness1.removeAttr('style');
+						roombusiness1.find('.roombusiness1').css('display', 'inline-block');
+						roombusiness1.find('.roombusiness2').css('display', 'none');
+						//td-->roomforward1
+						roomforward1.removeAttr('style');
+						roomforward1.find('.roomforward1').css('display', 'inline-block');
+						roomforward1.find('.roomforward2').css('display', 'none');
+						//td-->roomregion1
+						roomregion1.removeAttr('style');
+						roomregion1.find('.roomregion1').css('display', 'inline-block');
+						roomregion1.find('.roomregion2').css('display', 'none');
+						//td-->regionname
+						c_Branch.attr('contenteditable', null);
+						c_Branch.removeAttr('style');
+
+			  			return true;
+			  		}
+			    	alert('更新数据失败');
+			    	return false;
+			  	});
+			});
+	  	});
+	});
+
+	$(function(){
+	   	var pageIndex = 0;     //页面索引初始值  
+
+		InitTable(0);
+
+		$("#Pagination").pagination('<%= total_pages%>', {  
+            callback: PageCallback,  
+            prev_text: '上一页',       //上一页按钮里text  
+            next_text: '下一页',       //下一页按钮里text  
+            items_per_page: 10,  //显示条数  
+            num_display_entries: 4,    //连续分页主体部分分页条目数  
+            current_page: pageIndex,   //当前页索引  
+            num_edge_entries: 2        //两侧首尾分页条目数  
+        });
+
+        function PageCallback(index, jq) {
+            InitTable(index);
+        }
+
+        function InitTable(pageIndex) {
+
+			var data={};
+
+        	data.current_page=pageIndex;
+
+        	$.post("/room/indexlist", data, function(result){
+
+	  			var str = '';
+
+		  		for (var i=0; i<result.msg.length; i++) {
+					str = str + '<tr c-id="' + result.msg[i].c_id + '"><td class="col-md-1 roomname">' + result.msg[i].c_chatroom_name + '</td><td class="col-md-1 roomtype1">';
+					if (result.msg[i].c_code == 1) {
+						str = str + '<span class="roomtype1" value="1">主房间</span>';
+					} else if (result.msg[i].c_code == 2) {
+						str = str + '<span class="roomtype1" value="2">转播房间</span>';
+					} else {
+						str = str + '<span class="roomtype1" value="0">无</span>';
+					}
+					str = str + '<span class="roomtype2" style="display:none;"><select class="form-control"><option value="1" selected="">主房间</option><option value="2">转播房间</option></select></span></td>';
+					str = str + '<td class="col-md-2 roomforward1"><span class="roomforward1" value="' + result.msg[i].c_forward + '">' + result.msg[i].c_forward_name + '</span><span class="roomforward2" style="display:none;"><select class="form-control roomforward2"></select></span></td>';
+					var password = result.msg[i].c_roompassword == "" ? '无': result.msg[i].c_roompassword;
+					str = str + '<td class="col-md-1 roompass">' + password  + '</td>';
+					str = str + '<td class="col-md-1 roomregion1"><span class="roomregion1" value="' + result.msg[i].c_region + '">' + result.msg[i].c_region_name + '</span><span class="roomregion2" style="display:none;"><select class="form-control roomregion2"></select></span></td>';
+					var business = '';
+		        	if (result.msg[i].c_business == 1) {
+		        		business = '商品';
+		        	} else if (result.msg[i].c_business == 2) {
+		        		business = '基金';
+		        	} else if (result.msg[i].c_business == 3) {
+		        		business = 'H股';
+		        	} else if (result.msg[i].c_business == 4) {
+		        		business = '证券';
+		        	} else if (result.msg[i].c_business == 5) {
+		        		business = '汇银';
+		        	} else if (result.msg[i].c_business == 6) {
+		        		business = '华融';
+		        	}else if (result.msg[i].c_business == 7) {
+                        business = '新华融';
+                    }else if (result.msg[i].c_business == 8) {
+                        business = '银创';
+                    }else if (result.msg[i].c_business == 9) {
+                        business = '广贵';
+                    }else {
+		        		business = '无';
+		        	}
+					str = str + '<td class="col-md-1 roombusiness1"><span class="roombusiness1" value="'+result.msg[i].c_business+'">' + business + '</span><span class="roombusiness2" style="display:none;"><select class="form-control"><option value="0" selected="">无</option><option value="1">商品</option><option value="2">基金</option><option value="3">H股</option><option value="4">证券</option><option value="5">汇银</option><option value="6">华融</option><option value="7">新华融</option><option value="8">银创</option><option value="9">广贵</option></select></span></td>';
+					str = str + '<td class="col-md-1 c_ownername">' + result.msg[i].c_ownername + '<td class="col-md-1 c_Branch">' + result.msg[i].c_Branch + '</td></td><td class="col-md-1 department_id">' + result.msg[i].department_id + '</td>';
+					
+                    str=str+'<td class="col-md-1 dep_id">'+result.msg[i].c_dep+'</td>'
+					str = str + '<td class="col-md-2 roomstatus1">';
+
+					if (result.msg[i].c_status == 0) {
+						str = str + '<span class="roomstatus1" value="0">未开通</span>';
+					} else if (result.msg[i].c_status == 1) {
+						str = str + '<span class="roomstatus1" value="1">开通</span>';
+					} else {
+						str = str + '房间状态丢失';
+					}
+					str = str + '<span class="roomstatus2" style="display:none;"><select class="form-control"><option value="1" selected="selected">开通</option><option value="0">未开通</option></select></span></td>';
+
+					str = str + '<td class="col-md-1" style="position:relative;"><button class="btn btn-info edit"><i class="glyphicon glyphicon-edit icon-white"></i> 编辑</button><button class="btn btn-success save" style="display:none;"><i class="glyphicon glyphicon-edit icon-white"></i> 保存</button></div></td>';
+		  		}
+
+				$("#listbody").empty().append(str);
+
+				$(".edit").click(function() {
+					$(this).siblings('.save').css('display','inline-block');
+					$(this).css('display', 'none');
+					var roomname=$(this).parents('td').siblings('.roomname');
+					var roompass=$(this).parents('td').siblings('.roompass');
+					var roomstatus1=$(this).parents('td').siblings('.roomstatus1');
+					var roomtype1=$(this).parents('td').siblings('.roomtype1');
+					var roombusiness1=$(this).parents('td').siblings('.roombusiness1');
+					var roomforward1=$(this).parents('td').siblings('.roomforward1');
+					var roomregion1=$(this).parents('td').siblings('.roomregion1');
+					var c_ownername=$(this).parents('td').siblings('.c_ownername');
+					var c_Branch=$(this).parents('td').siblings('.c_Branch');
+					var department_id=$(this).parents('td').siblings('.department_id');
+                    var dep_id=$(this).parents('td').siblings('.dep_id');
+                    //td-->dep_id
+                    dep_id.attr('contenteditable', 'true');
+                    dep_id.css('background-color', '#9DE3EC');
+                    dep_id.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					//td-->department_id
+					department_id.attr('contenteditable', 'true');
+					department_id.css('background-color', '#9DE3EC');
+					department_id.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					//td-->roomname
+					roomname.attr('contenteditable', 'true');
+					roomname.css('background-color', '#9DE3EC');
+					roomname.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					//td-->c_ownername
+					c_ownername.attr('contenteditable', 'true');
+					c_ownername.css('background-color', '#9DE3EC');
+					c_ownername.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					//td-->roompass
+					roompass.attr('contenteditable', 'true');
+					roompass.css('background-color', '#9DE3EC');
+					roompass.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					//td-->roomstatus1
+					roomstatus1.css('background-color', '#9DE3EC');
+					roomstatus1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					roomstatus1.find('.roomstatus1').css('display', 'none');
+					roomstatus1.find('.roomstatus2').css('display', 'inline-block');
+					roomstatus1.find('.roomstatus2 .form-control').val(roomstatus1.find('.roomstatus1').attr("value"));
+					//td-->roomtype1
+					roomtype1.css('background-color', '#9DE3EC');
+					roomtype1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					roomtype1.find('.roomtype1').css('display', 'none');
+					roomtype1.find('.roomtype2').css('display', 'inline-block');
+					roomtype1.find('.roomtype2 .form-control').val(roomtype1.find('.roomtype1').attr("value"));
+					//td-->roombusiness1
+					roombusiness1.css('background-color', '#9DE3EC');
+					roombusiness1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					roombusiness1.find('.roombusiness1').css('display', 'none');
+					roombusiness1.find('.roombusiness2').css('display', 'inline-block');
+                    roombusiness1.find('.roombusiness2 .form-control').val(roombusiness1.find('.roombusiness1').attr("value"));
+                    //td-->c_Branch
+					c_Branch.attr('contenteditable', 'true');
+					c_Branch.css('background-color', '#9DE3EC');
+					c_Branch.css('-webkit-box-shadow', '#666 0px 0px 10px');
+					c_Branch.find('.c_Branch').css('display', 'none');
+					c_Branch.find('.c_Branch').css('display', 'inline-block');
+					$.post("/room/edit", function(res){
+						//td-->roomforward1
+						roomforward1.css('background-color', '#9DE3EC');
+						roomforward1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+						roomforward1.find('.roomforward1').css('display', 'none');
+						roomforward1.find('.roomforward2').css('display', 'inline-block');
+                        $(".roomforward2 select option").remove();
+						$("<option value='' selected>无</option>").appendTo($(".roomforward2 select"));
+						for (var i=0; i<res.mainroom.length; i++) {
+							$("<option value='" + res.mainroom[i].c_hash + "'>" + res.mainroom[i].c_chatroom_name + "</option>").appendTo($(".roomforward2 select"));
+						}
+						roomforward1.find('.roomforward2 .form-control').val(roomforward1.find('.roomforward1').attr("value"));
+						roomregion1.css('background-color', '#9DE3EC');
+						roomregion1.css('-webkit-box-shadow', '#666 0px 0px 10px');
+						roomregion1.find('.roomregion1').css('display', 'none');
+						roomregion1.find('.roomregion2').css('display', 'inline-block');
+                        $(".roomregion2 select option").remove();
+                        $("<option value='0' selected>无</option>").appendTo($(".roomregion2 select"));
+						for (var i=0; i<res.region.length; i++) {
+							$("<option value='" + res.region[i].c_id + "'>" + res.region[i].c_name + "</option>").appendTo($(".roomregion2 select"));
+						}
+						roomregion1.find('.roomregion2 .form-control').val(roomregion1.find('.roomregion1').attr("value"));
+				  	});
+					return false;
+				});
+
+				$(".save").click(function () {
+					var index=$(this);
+					var roomname=$(this).parents('td').siblings('.roomname');
+					var roompass=$(this).parents('td').siblings('.roompass');
+					var roomstatus1=$(this).parents('td').siblings('.roomstatus1');
+					var roomtype1=$(this).parents('td').siblings('.roomtype1');
+					var roombusiness1=$(this).parents('td').siblings('.roombusiness1');
+					var roomforward1=$(this).parents('td').siblings('.roomforward1');
+					var roomregion1=$(this).parents('td').siblings('.roomregion1');
+					var c_ownername=$(this).parents('td').siblings('.c_ownername');
+					var c_Branch=$(this).parents('td').siblings('.c_Branch');
+					var department_id=$(this).parents('td').siblings('.department_id');
+                    var dep_id=$(this).parents('td').siblings('.dep_id');
+					var data={};
+					data.c_id=$(this).parents('tr').attr('c-id');
+					if (!roomname.text() || roomname.text() == '') {
+						alert('房间名称不能为空');
+						return false;
+					}
+					data.c_chatroom_name=(roomname.text()).trim();
+					if (!roompass.text() || roompass.text() != '无') {
+						data.c_roompassword=roompass.text();
+					}
+					data.c_status=roomstatus1.find('.roomstatus2 .form-control').val();
+					data.c_code=roomtype1.find('.roomtype2 .form-control').val();
+					data.c_business=roombusiness1.find('.roombusiness2 .form-control').val();
+					data.c_forward=roomforward1.find('.roomforward2 .form-control').val();
+					data.c_region=roomregion1.find('.roomregion2 .form-control').val();
+					data.c_Branch=c_Branch.text();
+					data.department_id=department_id.text();
+                    data.c_dep=dep_id.text();
+                    roombusiness1.find('.roombusiness1').attr("value",data.c_business);
+                    roomforward1.find('.roomforward1').attr("value",data.c_forward);
+                    roomregion1.find('.roomregion1').attr("value",data.c_region);
+                    if(!data.c_dep){
+                        alert("营业部ID不能为空");
+                        return false;
+                    }
+					if(isNaN(data.department_id)){
+					   alert("营业部管理员ID为数字");
+					   return false;
+					}
+					if (!c_ownername.text() || c_ownername.text() == '') {
+						alert('房主不能为空');
+						return false;
+					}
+					data.c_ownername=c_ownername.text();
+                    if(!!isNaN(+data.c_Branch) || parseInt(data.c_Branch)<=0){
+                        alert('请输入正确的业务组ID！');
+                        return false;
+                    }
+                    if(!!isNaN(+data.department_id) || parseInt(data.department_id)<=0){
+                        alert('请输入正确的营业部管理员ID！');
+                        return false;
+                    }
+                    if(!!isNaN(+data.c_dep) || parseInt(data.c_dep)<=0){
+                        alert('请输入正确的营业部ID！');
+                        return false;
+                    }
+
+				  	$.post("/room/update", data, function(result){
+				  		console.log(result);
+				  		if (result.status=='fail' && result.msg=='err_args') {
+				  			alert('请完成填写更新信息');
+				  			return false;
+				  		}
+				  		if (result.status=='fail' && result.msg=='nickname_err') {
+				  			alert('房主昵称不存在');
+				  			return false;
+				  		}
+                        if (result.status=='fail' && result.msg=='department_id_err') {
+                            alert('请输入正确的营业部管理员ID！');
+                            return false;
+                        }
+
+                        if (result.status=='ok') {
+
+							alert('更新数据成功');
+
+							index.siblings('.edit').css('display','inline-block');
+							index.css('display', 'none');
+
+							roomstatus1.find('.roomstatus1').html(roomstatus1.find('.roomstatus2 .form-control').find('option:selected').text() || '无');
+							roomtype1.find('.roomtype1').html(roomtype1.find('.roomtype2 .form-control').find('option:selected').text() || '无');
+							roombusiness1.find('.roombusiness1').html(roombusiness1.find('.roombusiness2 .form-control').find('option:selected').text() || '无');
+							roomforward1.find('.roomforward1').html(roomforward1.find('.roomforward2 .form-control').find('option:selected').text() || '无');
+							roomregion1.find('.roomregion1').html(roomregion1.find('.roomregion2 .form-control').find('option:selected').text() || '无');
+                            //td-->dep_id
+                            dep_id.attr('contenteditable', null);
+                            dep_id.removeAttr('style');
+							//td-->department_id
+							department_id.attr('contenteditable', null);
+							department_id.removeAttr('style');
+							//td-->regionname
+							roomname.attr('contenteditable', null);
+							roomname.removeAttr('style');
+							//td-->c_ownername
+							c_ownername.attr('contenteditable', null);
+							c_ownername.removeAttr('style');
+							//td-->roomstatus1
+							roomstatus1.removeAttr('style');
+							roomstatus1.find('.roomstatus1').css('display', 'inline-block');
+							roomstatus1.find('.roomstatus2').css('display', 'none');
+							//td-->roompass
+							roompass.attr('contenteditable', null);
+							roompass.removeAttr('style');
+							//td-->roomtype1
+							roomtype1.removeAttr('style');
+							roomtype1.find('.roomtype1').css('display', 'inline-block');
+							roomtype1.find('.roomtype2').css('display', 'none');
+							//td-->roombusiness1
+							roombusiness1.removeAttr('style');
+							roombusiness1.find('.roombusiness1').css('display', 'inline-block');
+							roombusiness1.find('.roombusiness2').css('display', 'none');
+							//td-->roomforward1
+							roomforward1.removeAttr('style');
+							roomforward1.find('.roomforward1').css('display', 'inline-block');
+							roomforward1.find('.roomforward2').css('display', 'none');
+							//td-->roomregion1
+							roomregion1.removeAttr('style');
+							roomregion1.find('.roomregion1').css('display', 'inline-block');
+							roomregion1.find('.roomregion2').css('display', 'none');
+							//td-->regionname
+							c_Branch.attr('contenteditable', null);
+							c_Branch.removeAttr('style');
+
+				  			return true;
+				  		}
+				    	alert('更新数据失败');
+				    	return false;
+				  	});
+				});
+				
+				return false;
+
+		  	});
+        }
+	});
+</script>

@@ -1,0 +1,152 @@
+<% include ../navigation %>
+<div class="ch-container">
+    <% include ../sidebar %>
+    <div id="content" class="col-lg-10 col-sm-10">
+        <div>
+            <ul class="breadcrumb">
+                <li><a href="/">主页</a></li>
+                <li><a href="/broadcast/add">添加全平台广播</a></li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>广播信息</h2>
+                    </div>
+                    <% if (error) { %>
+                    <div class="center alert alert-danger">
+                        <div><span class="ng-binding ng-scope"><%= error %></span></div>
+                    </div>
+                    <% } %>
+                    <% if (success) { %>
+                    <div class="center alert alert-success">
+                        <div><span class="ng-binding ng-scope"><%= success %></span></div>
+                    </div>
+                    <% } %>
+                    <div class="box-content">
+                        <form id="regioninfo" class="form-horizontal" role="form" action="addfm" method="post" enctype="multipart/form-data">
+                            <fieldset>
+                                <br />
+                                <div class="center col-md-10">
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 广播标题</span>
+                                        <input name="title" type="text" class="form-control title" placeholder="广播标题">
+                                    </div><br />
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 广播内容</span>
+                                        <textarea title="广播内容" name="content" class="form-control content" maxlength="70" rows="1"></textarea>
+                                    </div><br />
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user red"></i> 跳转链接</span>
+                                        <input name="uri" type="text" class="form-control" placeholder="跳转链接">
+                                    </div><br />
+                                    <p class="center col-md-5">
+                                        <input type="submit" class="btn btn-md btn-primary" value="提 交" />
+                                        <span class="btn btn-md btn-primary overview">预 览</span>
+                                    </p>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    .broadcast{
+        width: 337px;
+        height: 216px;
+        border:1px solid #c9cbca;
+        border-radius: 4px;
+        background:#fff;
+        z-index: 5;
+        clear: both;
+        box-shadow: 0 0 10px 2px rgba(0,0,0,.05);
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        display: none;
+    }
+    .broad-head{
+        height: 35px;
+        line-height: 35px;
+        clear: both;
+        background:#0a5495;
+    }
+    .broad-head span{
+        background:url(/img/broadcast/close-icon.png) no-repeat;
+        width: 12px;
+        height: 13px;
+        display: block;
+        float: right;
+        cursor: pointer;
+        margin: 10px 10px 0 0;
+    }
+    .broad-head h3{
+        width: 120px;
+        color: #fff;
+        float: left;
+        font-size: 14px;
+        line-height: 0;
+    }
+    .broad-head h3 b{
+        background:url(/img/broadcast/logo.png) no-repeat;
+        width: 19px;
+        height: 17px;
+        display: block;
+        float:left;
+        margin: -9px 8px 0 10px;
+    }
+    .broad-detail{
+        border-bottom: 1px solid #e5e5e5;
+        height: 122px;
+    }
+    .broad-detail h2{
+        text-align: center;
+        font-size: 18px;
+    }
+    .broad-detail p{
+        margin: 10px auto 0;
+        line-height: 20px;
+        text-indent: 22px;
+        width: 295px;
+        height: 78px;
+        word-wrap:break-word;
+        overflow: hidden;
+    }
+    .check-datails{
+        margin: 14px 15px 0 0;
+        float: right;
+    }
+
+    .big{
+        position:absolute;
+        top:0;
+        background:#000;
+        opacity:0.5;
+        left:0;
+        z-index  :2;
+    }
+</style>
+<div class="broadcast">
+    <div class="broad-head"><span></span><h3><b></b>通金视频</h3></div>
+    <div class="broad-matter">
+        <div class="broad-detail">
+            <h2 class="castTitle">分三等奖发顺丰哈迪</h2>
+            <p class="castBody">发大水了公开独守空房了独守空房发送的酸辣公开独守空房了独守空房发送的酸辣jgjgh gdfgfdgd的酸辣公开独守空房了独守空房发送的酸辣的</p>
+        </div>
+        <div class="check-datails">查看详情</div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(".overview").click(function() {
+        $(".broadcast .castTitle").html($(".title").val() || "请填写标题");
+        $(".broadcast .castBody").html($(".content").val() || "请填写广播内容");
+        $(".broadcast").show();
+    });
+    $(".broadcast .broad-head span").click(function() {
+        $(".broadcast").hide();
+    });
+</script>

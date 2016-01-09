@@ -1,0 +1,405 @@
+/**
+ * PlatformController
+ *
+ * @description :: Server-side logic for managing platforms
+ * @help        :: See http://links.sailsjs.org/docs/controllers
+ * 全平台模块
+ */
+var request = require('request');
+var moment = require('moment');
+var async = require('async');
+module.exports = {
+    GetAdInfo: function (req, res) {
+        var data = {};
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_ad_find';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, body) {
+                if (err) console.log(err);
+                var result = JSON.parse(body);
+                for (var i = 0; i < result.msg.length; i++) {
+                    result.msg[i].ad_addtime = moment(+result.msg[i].ad_addtime * 1000).format('YYYY-MM-DD, hh:mm:ss');
+                    result.msg[i].ad_updatetime = moment(+result.msg[i].ad_updatetime * 1000).format('YYYY-MM-DD, hh:mm:ss');
+                }
+                return res.view('ad/adList', {
+                    username: req.session.username,
+                    usertype: req.session.usertype,
+                    ads: result.msg || [],
+                    total_pages: result.sum,
+                    current_page: result.current_page
+                });
+            }
+        );
+    },
+    GetAdInfoJson: function (req, res) {
+        var data = {};
+        data.adname = req.param('titlename') || '';
+        data.current_page = (+req.param('current_page') + 1) || 1;
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_ad_find';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, body) {
+                if (err) console.log(err);
+                var result = JSON.parse(body);
+                for (var i = 0; i < result.msg.length; i++) {
+                    result.msg[i].ad_addtime = moment(+result.msg[i].ad_addtime * 1000).format('YYYY-MM-DD, hh:mm:ss');
+                    result.msg[i].ad_updatetime = moment(+result.msg[i].ad_updatetime * 1000).format('YYYY-MM-DD, hh:mm:ss');
+                }
+                return res.json({
+                    username: req.session.username,
+                    usertype: req.session.usertype,
+                    ads: result.msg || [],
+                    total_pages: result.sum,
+                    current_page: result.current_page
+                });
+            }
+        );
+    },
+    GetAddAdPage: function (req, res) {
+        return res.view('ad/adAdd', {
+            username: req.session.username,
+            usertype: req.session.usertype,
+            error: req.param('error') || '',
+            success: req.param('success') || ''
+        });
+    },
+    AddAdInfo: function (req, res) {
+        var data = req.body;
+        data.ad_uid = req.session.c_id || 0;
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_ad_add';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, result) {
+                if (err) console.log(err);
+                var result_json = JSON.parse(result ||{status:'no'});
+                return res.json(result_json);
+            }
+        );
+    },
+    DeleteAdInfo: function (req, res) {
+        var data = {};
+        data.ad_id = req.param('ad_id');
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_ad_detele';
+        collector.log(req, req.session.c_id, req.session.username, JSON.stringify(data));
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, result) {
+                if (err) console.log(err);
+                var result_json = JSON.parse(result);
+                return res.json(result_json);
+            }
+        );
+    }, CloseAdInfo: function (req, res) {
+        var data = {};
+        data.ad_id = req.param('ad_id');
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_ad_colse';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, result) {
+                if (err) console.log(err);
+                var result_json = JSON.parse(result);
+                return res.json(result_json);
+            }
+        );
+    }, OpenAdInfo: function (req, res) {
+        var data = {};
+        data.ad_id = req.param('ad_id');
+        async.waterfall([
+            function (callback) {
+                var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_ad_colse_history';
+                request.post({url: url, form: JSON.stringify(data)},
+                    function (err, httpResponse, result) {
+                        if (err) console.log(err);
+                        var colse_json = JSON.parse(result);
+                        return callback(null, colse_json)
+                    }
+                );
+            },
+            function (colseResult, callback) {
+                if ('ok' == colseResult.status) {
+                    var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_ad_open';
+                    request.post({url: url, form: JSON.stringify(data)},
+                        function (err, httpResponse, result) {
+                            if (err) console.log(err);
+                            var open_json = JSON.parse(result);
+                            return callback(null, open_json)
+                        }
+                    );
+                } else {
+                    return callback(null, colseResult)
+                }
+
+            }
+        ], function (err, result) {
+            if (err) console.log(err);
+            return res.json(result);
+        });
+
+    },
+    /**
+     *  礼包领取统计功能实现
+     * **/
+    GetGiftStatistics: function (req, res) {
+        var startTime = req.param('find_starttime') || 0;
+        var endTime = req.param('find_endtime') || 9999999999;
+        var findName = req.param('find_roomname');
+        var type = req.param('type');
+        var current_page = (+req.param('current_page') + 1) || 1;
+        var data = {
+            "find_starttime": +startTime,
+            "find_endtime": +endTime,
+            "find_roomname": findName,
+            "current_page": current_page
+        };
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_gift_statistics';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, body) {
+                if (!!err) {
+                    console.log(err)
+                }
+                var result = JSON.parse(body);
+                if ('json' == type) {
+                    return res.json({
+                        username: req.session.username,
+                        usertype: req.session.usertype,
+                        giftInfo: result.msg || [],
+                        total_pages: result.sum,
+                        current_page: result.current_page
+                    });
+                } else {
+                    return res.view('statistics/giftStatistics', {
+                        username: req.session.username,
+                        usertype: req.session.usertype,
+                        giftInfo: result.msg || [],
+                        total_pages: result.sum,
+                        current_page: result.current_page
+                    });
+                }
+            }
+        );
+    },
+    /**
+     * 礼包领取统计导出信息
+     * **/
+    GetGiftStatisticsExcel: function (req, res) {
+        var startTime = req.param('find_starttime') || 0;
+        var endTime = req.param('find_endtime') || 9999999999;
+        var findName = req.param('find_roomname');
+        var data = {
+            "find_starttime": +startTime,
+            "find_endtime": +endTime,
+            "find_roomname": findName,
+            'timeout': 5000
+        };
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_gift_statistics_export';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, body) {
+                if (!!err) {
+                    console.log(err)
+                }
+                var result = JSON.parse(body);
+                var cols = [
+                        {caption: '房间hash', type: 'string'},
+                        {caption: '房间名称', type: 'string'},
+                        {caption: '上传数量', type: 'number'},
+                        {caption: '下载数量', type: 'number'}
+                    ]
+                    , rows = collector.ObjTOArray(result);
+                var result = collector.excel(cols, rows);
+                res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+                res.setHeader("Content-Disposition", "attachment; filename=" + "GiftStatistics.xlsx");
+                res.end(result, 'binary');
+            }
+        );
+    },
+    /** 全平台礼包上传功能 **/
+    GetGiftAddPage: function (req, res) {
+        return res.view('statistics/GiftAdd', {
+            username: req.session.username,
+            usertype: req.session.usertype,
+            error: req.param('error') || '',
+            success: req.param('success') || ''
+        });
+    },
+    AddGiftInfo: function (req, res) {
+        var data = req.body;
+        var timestamp = (Date.parse(new Date(data.gift_time)) / 1000);
+        data.gift_time = timestamp;
+        data.gift_c_hash = sails.config.platform_gift_hash || 'tjspplatformgifthash';
+        data.gift_uid = req.session.c_id || 0;
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zn_gift_add';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, result) {
+                if (err) console.log(err);
+                var result_json = JSON.parse(result);
+                return res.json(result_json);
+            }
+        );
+    },
+    GetGiftInfo: function (req, res) {
+        var data = {};
+        data.gift_c_hash = sails.config.platform_gift_hash || 'tjspplatformgifthash';
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zn_gift_list';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, body) {
+                if (err) console.log(err);
+                var result = JSON.parse(body);
+                for (var i = 0; i < result.length; i++) {
+                    result[i].gift_addtime = moment(+result[i].gift_addtime * 1000).format('YYYY-MM-DD, hh:mm:ss');
+                    result[i].gift_time = moment(+result[i].gift_time * 1000).format('YYYY-MM-DD, hh:mm:ss');
+                }
+                return res.view('statistics/GiftList', {
+                    username: req.session.username,
+                    usertype: req.session.usertype,
+                    gifts: result || []
+                });
+            }
+        );
+    },
+    DeleteGifoInfo: function (req, res) {
+        var data = {};
+        data.gift_id = req.param('gift_id');
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zn_gift_delete';
+        collector.log(req, req.session.c_id, req.session.username, JSON.stringify(data));
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, result) {
+                if (err) console.log(err);
+                var result_json = JSON.parse(result);
+                return res.json(result_json);
+            }
+        );
+    },
+    /**
+     *  平台礼包领取统计功能实现
+     * **/
+    GetGiftOfficial: function (req, res) {
+        var myDate = new Date();
+        var stime = myDate.getFullYear() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getDate();
+        var etime = myDate.getFullYear() + "/" + (myDate.getMonth() + 1) + "/" + (myDate.getDate() + 1) + ' 23:59:59';
+        if (myDate.getDate() + 1 > 31) {
+            etime = myDate.getFullYear() + "/" + (myDate.getMonth() + 2) + "/" + 1 + ' 23:59:59';
+        }
+        var start = new Date(Date.parse(stime)).getTime() / 1000;
+        var end = new Date(Date.parse(etime)).getTime() / 1000;
+        var startTime = req.param('find_starttime') || start;
+        var endTime = req.param('find_endtime') || end;
+        var type = req.param('type');
+        var data = {
+            "find_starttime": +startTime,
+            "find_endtime": +endTime
+        };
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_gift_Official';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, body) {
+                if (!!err) {
+                    console.log(err)
+                }
+                var result = JSON.parse(body);
+                if ('json' == type) {
+                    return res.json({
+                        username: req.session.username,
+                        usertype: req.session.usertype,
+                        giftInfo: result
+                    });
+                }
+                return res.view('statistics/giftOfficial', {
+                    username: req.session.username,
+                    usertype: req.session.usertype,
+                    giftInfo: result
+                });
+            }
+        );
+    },
+    /**
+     * 平台礼包领取统计导出信息
+     * **/
+    GetGiftOfficialExcel: function (req, res) {
+        var myDate = new Date();
+        var stime = myDate.getFullYear() + "/" + (myDate.getMonth() + 1) + "/" + myDate.getDate();
+        var etime = myDate.getFullYear() + "/" + (myDate.getMonth() + 1) + "/" + (myDate.getDate() + 1) + ' 23:59:59';
+        if (myDate.getDate() + 1 > 31) {
+            etime = myDate.getFullYear() + "/" + (myDate.getMonth() + 2) + "/" + 1 + ' 23:59:59';
+        }
+        var start = new Date(Date.parse(stime)).getTime() / 1000;
+        var end = new Date(Date.parse(etime)).getTime() / 1000;
+        var startTime = req.param('find_starttime') || start;
+        var endTime = req.param('find_endtime') || end;
+        var data = {
+            "find_starttime": +startTime,
+            "find_endtime": +endTime,
+            'timeout': 5000
+        };
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_gift_Official';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, body) {
+                if (!!err) {
+                    console.log(err)
+                }
+                var result = JSON.parse(body);
+                var giftInfo = [
+                    {'name': '平台礼包', 'up_num': result.update_gift_num, 'do_wn': result.download_gift_num}
+                ]
+                var cols = [
+                        {caption: '名称', type: 'string'},
+                        {caption: '上传数量', type: 'number'},
+                        {caption: '下载数量', type: 'number'}
+                    ]
+                    , rows = collector.ObjTOArray(giftInfo);
+                var result = collector.excel(cols, rows);
+                res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+                res.setHeader("Content-Disposition", "attachment; filename=" + "GiftOfficialExcel.xlsx");
+                res.end(result, 'binary');
+            }
+        );
+    },
+
+    /**
+     * 房间添加营销QQ功能
+     * **/
+    addmarketingQQv: function (req, res) {
+        return res.view('marketing/marketingQQadd', {
+            username: req.session.username,
+            usertype: req.session.usertype,
+            error: req.param('error') || '',
+            success: req.param('success') || ''
+        });
+    },
+    addmarketingQQadd: function (req, res) {
+        var data = {};
+        if (!req.param('r_name') || (req.param('r_name')).trim() == '') return res.redirect('/platform/addmarketingQQv?error=请填写房间名称');
+        if (!req.param('r_hash') || (req.param('r_hash')).trim() == '') return res.redirect('/platform/addmarketingQQv?error=请填写房间hash');
+        if (!req.param('r_text') || (req.param('r_text')).trim() == '') return res.redirect('/platform/addmarketingQQv?error=请填写营销脚本');
+        data.c_hash = req.param('r_hash');
+        data.c_chatroom_name = req.param('r_name') || '';
+        data.c_text = req.param('r_text') || '';
+        collector.log(req, req.session.c_id, req.session.username, JSON.stringify(data));
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_marketingQQ_add';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, body) {
+                if (err) console.log(err);
+                return res.redirect('/platform/addmarketingQQv?success=添加成功');
+            }
+        );
+    },
+    /**
+     * 聊天历史记录删除
+     ***/
+    chatInfoDel: function (req, res) {
+        return res.view('statistics/chatPage', {
+            error: req.param('error') || '',
+            usertype: req.session.usertype,
+            username: req.session.username
+        });
+    },
+    delUserChat: function (req, res) {
+        var data = {};
+        data.c_hash = req.param('c_hash') || '';
+        data.c_name = req.param('c_name') || '';
+//        console.log(data);
+        collector.log(req, req.session.c_id, req.session.username, JSON.stringify(data));
+        var url = req.protocol + '://' + sails.config.apiserver + '/TJVideoSVC/zj_chatlog_detele';
+        request.post({url: url, form: JSON.stringify(data)},
+            function (err, httpResponse, body) {
+//                console.log(body)
+                if (err) console.log(err);
+                return res.json({"status": "ok"});
+            }
+        );
+    },
+
+};

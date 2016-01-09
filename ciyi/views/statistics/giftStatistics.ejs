@@ -1,0 +1,200 @@
+<% include ../navigation %>
+<div class="ch-container" xmlns="http://www.w3.org/1999/html">
+    <% include ../sidebar %>
+    <div id="content" class="col-lg-10 col-sm-10">
+        <div>
+            <ul class="breadcrumb">
+                <li><a href="/">主页</a></li>
+                <li><a href="/platform/GetGiftStatistics">房间礼包统计列表</a></li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well">
+                        <h2><i class="glyphicon glyphicon-user">房间礼包统计列表</i></h2>
+
+                        <div class="input-group input-group-md" align="right" style="float: right;margin-top: -11px;">
+                            <i class="glyphicon glyphicon-download gift_download"
+                               style="margin: 12px 4px 0 8px;font-size: 15px;cursor:pointer"></i>
+                            <input type="text" class="ui-datepicker-time"
+                                   style="text-align: center; margin-right: 7px; border-radius:5px; border:1px solid #d1d1d1;"
+                                   readonly value="" id="find_time"/>
+
+                            <div class="ui-datepicker-css">
+                                <div class="ui-datepicker-quick">
+                                    <p>快捷日期<a class="ui-close-date">X</a></p>
+
+                                    <div>
+                                        <input class="ui-date-quick-button" type="button" value="今天" alt="0" name=""/>
+                                        <input class="ui-date-quick-button" type="button" value="昨天" alt="-1" name=""/>
+                                        <input class="ui-date-quick-button" type="button" value="7天内" alt="-6" name=""/>
+                                        <input class="ui-date-quick-button" type="button" value="14天内" alt="-13"
+                                               name=""/>
+                                        <input class="ui-date-quick-button" type="button" value="30天内" alt="-29"
+                                               name=""/>
+                                        <input class="ui-date-quick-button" type="button" value="60天内" alt="-59"
+                                               name=""/>
+                                    </div>
+                                </div>
+                                <div class="ui-datepicker-choose">
+                                    <p>自选日期</p>
+
+                                    <div class="ui-datepicker-date">
+                                        <input name="startDate" id="startDate" class="startDate" readonly
+                                               value="2014/12/20" type="text">
+                                        -
+                                        <input name="endDate" id="endDate" class="endDate" readonly value="2014/12/20"
+                                               type="text" disabled onChange="datePickers()">
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="text" id="titlename" placeholder="房间名称"
+                                   style="text-align: center; margin-right: 7px; border-radius:5px; border:1px solid #d1d1d1;">
+                            <i class="glyphicon glyphicon-search gray search"
+                               style="margin: 12px 4px 0 8px;font-size: 15px;cursor:pointer"></i>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <table class="table table-striped table-bordered table-hover bootstrap-datatable responsive">
+                            <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>房间hash</th>
+                                <th>房间名称</th>
+                                <th>上传数量</th>
+                                <th>下载数量</th>
+                            </tr>
+                            </thead>
+                            <tbody class="content" id="listbody">
+                            <% giftInfo.forEach(function(ginfo, index){ %>
+                            <tr>
+                                <td class="col-md-1 num"><%= index + 1 %></td>
+                                <td class="col-md-2 c_hash"><%= ginfo.c_hash %></td>
+                                <td class="col-md-2 c_chatroom_name"><%= ginfo.c_chatroom_name %></td>
+                                <td class="col-md-2 update_gift_num"><%= ginfo.update_gift_num %></td>
+                                <td class="col-md-2 download_gift_num"><%= ginfo.download_gift_num %></td>
+                            </tr>
+                            <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--<div id="page" align="right" style="width:97%"></div>-->
+                    <div id="Pagination" class="pagination"></div>
+                    <!--/span-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    @charset "utf-8";
+    .pagination {
+        float: right;
+    }
+
+    .pagination a {
+        text-decoration: none;
+        border: 1px solid #AAE;
+        color: #15B;
+    }
+
+    .pagination a, .pagination span {
+        display: inline-block;
+        padding: 0.1em 0.4em;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .pagination .current {
+        background: #26B;
+        color: #fff;
+        border: 1px solid #AAE;
+    }
+
+    .pagination .current.prev, .pagination .current.next {
+        color: #999;
+        border-color: #999;
+        background: #fff;
+    }
+</style>
+
+<script type="text/javascript">
+    $("#titlename").bind("keydown", function (e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            $(".search").trigger("click");
+        }
+    });
+    $(".search").click(function () {
+        var data = {};
+        data.type = 'json';
+        data.find_roomname = $('#titlename').val() || '';
+        var find_times = $("#find_time").val().split("—");
+        data.find_starttime = new Date(Date.parse(find_times[0])).getTime() / 1000 || 0;
+        data.find_endtime = new Date(Date.parse(find_times[1] + ' 23:59:59')).getTime() / 1000 || 9999999999;
+        $.post("/platform/GetGiftStatistics", data, function (result) {
+            var str = '';
+            for (var i = 0; i < result.giftInfo.length; i++) {
+                str = str + '<tr ad-id="' + (i + 1) + '">';
+                str = str + '<td class="col-md-1 num">' + (i + 1) + '</td>';
+                str = str + '<td class="col-md-2 c_hash">' + result.giftInfo[i].c_hash + '</td>';
+                str = str + '<td class="col-md-2 c_chatroom_name">' + result.giftInfo[i].c_chatroom_name + '</td>';
+                str = str + '<td class="col-md-2 update_gift_num">' + result.giftInfo[i].update_gift_num + '</td>';
+                str = str + '<td class="col-md-2 download_gift_num">' + result.giftInfo[i].download_gift_num + '</td>';
+                str = str + '</tr>';
+            }
+            $("#listbody").empty().append(str);
+            return false;
+        });
+    });
+    $(".gift_download").click(function () {
+        var data = {};
+        data.find_roomname = $('#titlename').val() || '';
+        var find_times = $("#find_time").val().split("—");
+        data.find_starttime = new Date(Date.parse(find_times[0])).getTime() / 1000 || 0;
+        data.find_endtime = new Date(Date.parse(find_times[1] + ' 23:59:59')).getTime() / 1000 || 9999999999;
+        window.location.href='/platform/GetGiftStatisticsExcel?find_roomname='+data.find_roomname+'&find_starttime='+data.find_starttime+'&find_endtime='+data.find_endtime;
+    });
+    $(function () {
+        var pageIndex = 0;     //页面索引初始值
+        InitTable(0);
+        $("#Pagination").pagination('<%= total_pages%>', {
+            callback: PageCallback,
+            prev_text: '上一页',       //上一页按钮里text
+            next_text: '下一页',       //下一页按钮里text
+            items_per_page: 15,  //显示条数
+            num_display_entries: 4,    //连续分页主体部分分页条目数
+            current_page: pageIndex,   //当前页索引
+            num_edge_entries: 2        //两侧首尾分页条目数
+        });
+
+        function PageCallback(index, jq) {
+            InitTable(index);
+        }
+
+        function InitTable(pageIndex) {
+            var data = {};
+            var find_times = $("#find_time").val().split("—");
+            data.find_starttime = new Date(Date.parse(find_times[0])).getTime() / 1000 || 0;
+            data.find_endtime = new Date(Date.parse(find_times[1] + ' 23:59:59')).getTime() / 1000 || 9999999999;
+            data.current_page = pageIndex;
+            data.find_roomname = $('#titlename').val() || '';
+            data.type = 'json';
+            $.post("/platform/GetGiftStatistics", data, function (result) {
+                var str = '';
+                for (var i = 0; i < result.giftInfo.length; i++) {
+                    str = str + '<tr ad-id="' + (i + 1) + '">';
+                    str = str + '<td class="col-md-1 num">' + (i + 1) + '</td>';
+                    str = str + '<td class="col-md-2 c_hash">' + result.giftInfo[i].c_hash + '</td>';
+                    str = str + '<td class="col-md-2 c_chatroom_name">' + result.giftInfo[i].c_chatroom_name + '</td>';
+                    str = str + '<td class="col-md-2 update_gift_num">' + result.giftInfo[i].update_gift_num + '</td>';
+                    str = str + '<td class="col-md-2 download_gift_num">' + result.giftInfo[i].download_gift_num + '</td>';
+                    str = str + '</tr>';
+                }
+                $("#listbody").empty().append(str);
+                return false;
+            });
+        }
+    });
+</script>

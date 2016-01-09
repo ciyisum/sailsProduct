@@ -1,0 +1,89 @@
+<div class="row">
+    <div class="col-sm-2 col-lg-2">
+        <div class="sidebar-nav">
+            <div class="nav-canvas">
+                <ul class="nav nav-pills nav-stacked main-menu">
+                    <li class="accordion">
+                        <a><i class="glyphicon glyphicon-plus"></i><span> 房间管理</span></a>
+                        <ul class="nav nav-pills nav-stacked">
+
+                            <% if (usertype == '1' || usertype == '2' || usertype == '3') {%>
+                                <li><a href="/room/auditpaylist">付费审核</a></li>
+                                <li><a href="/room/auditlist">免费审核</a></li>
+                            <% } %>
+
+                            <% if (usertype == '1' || usertype == '3') {%>
+                                <li><a href="/room/index">房间列表</a></li>
+                                <li><a href="/room/owner">讲师结算</a></li>
+                                <li><a href="/room/setroomindex">房间设置</a></li>
+                                <li><a href="/room/relayRooms">批量转播</a></li>
+                                <li><a href="/room/roomliftban">禁用 IP</a></li>
+                            <% } %>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav nav-pills nav-stacked main-menu">
+                    <li class="accordion">
+                        <a><i class="glyphicon glyphicon-plus"></i><span> 大区管理</span></a>
+                        <ul class="nav nav-pills nav-stacked">
+
+                            <% if (usertype == '1' || usertype == '2' || usertype == '3') {%>
+                                <li><a href="/region/auditlist">审核列表</a></li>
+                            <% } %>
+
+                            <% if (usertype == '1' || usertype == '3') {%>
+                                <li><a href="/region/regionlist">大区列表</a></li>
+                                <li><a href="/region/regionOpenList">大区佣金</a></li>
+                                <!--<li><a href="/broadcast/history">广播历史</a></li>-->
+                                <li><a href="/broadcast/record">广播记录</a></li>
+                            <% } %>
+
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav nav-pills nav-stacked main-menu">
+                    <li class="accordion">
+                        <a><i class="glyphicon glyphicon-plus"></i><span> 用户管理</span></a>
+                        <ul class="nav nav-pills nav-stacked">
+
+                            <% if (usertype == '1') {%>
+                                <li><a href="/adminuser/userindex">用户列表</a></li>
+                            <% } %>
+
+                            <% if (usertype == '1' || usertype == '3') {%>
+                                <li><a href="/adminuser/userlock">用户锁定</a></li>
+                            <% } %>
+
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav nav-pills nav-stacked main-menu">
+                    <li class="accordion">
+                        <a><i class="glyphicon glyphicon-plus"></i><span> SEO</span></a>
+                        <ul class="nav nav-pills nav-stacked">
+                            <% if (usertype == '1' || usertype == '4') {%>
+                                <li><a href="/room/seolist"> 房间列表</a></li>
+                            <% } %>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav nav-pills nav-stacked main-menu">
+                    <li class="accordion">
+                        <a><i class="glyphicon glyphicon-plus"></i><span> 平台管理</span></a>
+                        <ul class="nav nav-pills nav-stacked">
+                            <% if (usertype == '1' || usertype == '3') {%>
+                            <li><a href="/broadcast/getfms"> 平台广播</a></li>
+                            <li><a href="/platform/GetAdInfo">平台广告</a></li>
+                            <!--<li><a href="/platform/GetGiftStatistics">房间礼包统计</a></li>-->
+                            <li><a href="/platform/GetGiftInfo">平台礼包</a></li>
+                            <li><a href="/platform/GetGiftOfficial">礼包统计</a></li>
+                            <li><a href="/platform/addmarketingQQv">营销 QQ</a></li>
+                            <li><a href="/platform/chatInfoDel">聊天历史</a></li>
+                            <li><a href="/qianyan/index">钱眼推广</a></li>
+                            <% } %>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>

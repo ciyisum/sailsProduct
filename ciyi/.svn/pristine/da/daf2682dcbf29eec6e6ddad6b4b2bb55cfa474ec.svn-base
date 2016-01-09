@@ -1,0 +1,225 @@
+<%include ../navigation%>
+<div class="ch-container">
+	<% include ../sidebar%>
+        <div id="content" class="col-lg-10 col-sm-10">
+        	<div>
+		        <ul class="breadcrumb">
+		            <li><a href="/">主页</a></li>
+		            <li><a href="/adminuser/userindex">管理员列表</a></li>
+		        </ul>
+		    </div>
+    	<div class="row">
+		    <div class="box col-md-12">
+		    <div class="box-inner">
+		    <div class="box-header well">
+		        <h2><i class="glyphicon glyphicon-user"> 房间列表</i></h2>
+	        	<div class="input-group input-group-md" align="right" style="float: right;margin-top: -8px;">
+		        	<a href="/adminuser/useradd" target="_blank"><i class="glyphicon glyphicon-plus gray" style="margin: 11px 0 0 8px;font-size: 16px;"></i></a>
+	        	</div>
+		    </div>
+		    <div class="box-content">
+		    	<table id="roomlist" class="table table-striped table-bordered table-hover bootstrap-datatable responsive">
+				    <thead>
+					    <tr>
+					        <th>管理员名称</th>
+					        <th>管理员角色</th>
+					        <th>真实姓名</th>
+					        <th>上次登录时间</th>
+					        <th>上次登录IP</th>
+					        <th>操作</th>
+					    </tr>
+				    </thead>
+		    		<tbody >
+		    			<% if (userlist || userlist != undefined || userlist != '') {%>
+			    			<% for(var i=0; i<userlist.length; i++) {%>
+			    				<% if (userlist[i].username != 'admin') {%>
+								    <tr c-id="<%= userlist[i].c_id %>">
+								        <td class="col-md-1 username"><%= userlist[i].username || '用户名丢失' %></td>
+								        <td class="col-md-1 roleid">
+								        	<% if (userlist[i].roleid==1) {%>
+								        		<span class="roled">管理员</span>
+								        	<% } else if (userlist[i].roleid==2) {%>
+								        		<span class="roled">销售</span>
+								        	<% } else if (userlist[i].roleid==3) {%>
+								        		<span class="roled">客服</span>
+								        	<% } else if (userlist[i].roleid==4) {%>
+								        		<span class="roled">SEO</span>
+								        	<% } else {%>
+								        		<span class="roled">角色丢失</span>
+								        	<% } %>
+								        	<span class="rolec" style="display:none;">
+								        		<select class="form-control">
+								        			<option value="1">管理员</option>
+								        			<option value="3">客服</option>
+								        			<option value="2">销售</option>
+								        			<option value="4">SEO</option>
+								        		</select>
+								        	</span>
+								        </td>
+								        <td class="col-md-1 realname"><%= userlist[i].realname || '真实姓名丢失' %></td>
+								        <td class="col-md-2"><%= userlist[i].lastlogintime || '上次登录时间丢失' %></td>
+								        <td class="col-md-2"><%= userlist[i].lastloginip || '上次登录IP丢失' %></td>
+								        <td class="col-md-3">
+
+								        	<button class="btn btn-info edit">
+								                <i class="glyphicon glyphicon-edit icon-white"></i> 编辑
+								            </button>
+								            <button class="btn btn-success save" style="display:none;">
+								                <i class="glyphicon glyphicon-edit icon-white"></i> 保存
+								            </button>
+								            <button class="btn btn-warning passreset" style="position:relative;">
+								                <i class="glyphicon glyphicon-edit icon-white"></i> 密码修改
+	    										<div class="box-content passinfo" title="密码修改" style="background-color:#ccc;border:solid 1px #ccc;position:absolute;display:none;width:180px;height:180px;padding:5px; z-index:100;">
+									                <form class="reset_form form-horizontal">
+								                        <fieldset>
+								                        	<br />
+								                        	<div class="center col-md-12">
+									                            <div class="input-group input-group-md">
+									                                <input type="password" class="form-control new_pass" placeholder="新密码">
+									                            </div><br />
+									                            <div class="input-group input-group-md">
+									                                <input type="password" class="form-control repeat_pass" placeholder="再次输入新密码">
+									                            </div><br />
+									                            <div class="input-group input-group-md">
+									                                <input type="submit" class="btn btn-md btn-success center" value="保 存" />
+									                            </div><br />
+									                        </div>
+								                        </fieldset>
+									                </form>
+												</div>
+								            </button>
+								            <button class="btn btn-danger delete">
+								                <i class="glyphicon glyphicon-trash icon-white"></i> 删 除 
+								            </button>
+								        </td>
+								    </tr>
+								<% } %>
+							<% } %>
+						<% } %>
+	    			</tbody>
+	    		</table>
+	    	</div>
+	    </div>
+    <!--/span-->
+	</div>
+</div>
+<script type="text/javascript">
+	$(".edit").click(function() {
+		$(this).siblings('.save').css('display','inline-block');
+		$(this).css('display', 'none');
+		var username=$(this).parents('td').siblings('.username');
+		var roleid=$(this).parents('td').siblings('.roleid');
+		var realname=$(this).parents('td').siblings('.realname');
+		//td-->username
+		username.attr('contenteditable', 'true');
+		username.css('background-color', '#9DE3EC');
+		username.css('-webkit-box-shadow', '#666 0px 0px 10px');
+		//td-->roleid
+		roleid.css('background-color', '#9DE3EC');
+		roleid.css('-webkit-box-shadow', '#666 0px 0px 10px');
+		roleid.find('.roled').css('display', 'none');
+		roleid.find('.rolec').css('display', 'inline-block');
+		//td-->realname
+		realname.attr('contenteditable', 'true');
+		realname.css('background-color', '#9DE3EC');
+		realname.css('-webkit-box-shadow', '#666 0px 0px 10px');
+		return false;
+	});
+
+	$(".save").click(function () {
+		$(this).siblings('.edit').css('display','inline-block');
+		$(this).css('display', 'none');
+		var username=$(this).parents('td').siblings('.username');
+		var roleid=$(this).parents('td').siblings('.roleid');
+		var realname=$(this).parents('td').siblings('.realname');
+		//td-->username
+		username.attr('contenteditable', null);
+		username.removeAttr('style');
+		//td-->roleid
+		roleid.removeAttr('style');
+		roleid.find('.roled').css('display', 'inline-block');
+		roleid.find('.rolec').css('display', 'none');
+		//td-->realname
+		realname.attr('contenteditable', null);
+		realname.removeAttr('style');
+
+		var data={};
+		data.c_id=$(this).parents('tr').attr('c-id');
+		data.username=username.text();
+		data.realname=realname.text();
+		data.roleid=roleid.find('.rolec .form-control').val();
+
+	  	$.post("/adminuser/update", data,function(result){
+	  		if (result=='ok') {
+				if (roleid.find('.rolec .form-control').val()==1){
+					roleid.find('.roled').html('管理员');
+				} else if (roleid.find('.rolec .form-control').val()==1){
+					roleid.find('.roled').html('销售');
+				} else {
+					roleid.find('.roled').html('角色丢失');
+				}
+	  			return true;
+	  		}
+	    	alert('更新数据失败');
+	    	return false;
+	  	});
+	});
+	$(".delete").click(function() {
+		if (confirm("是否确认")) {
+			var data={};
+			data.c_id=$(this).parents('tr').attr('c-id');
+			var val=$(this);
+			$.post("/adminuser/delete", data, function(result) {
+				if (result='ok') {
+					val.parent().parent().remove();
+					alert('删除成功')
+					return false;
+				}
+				alert('删除数据失败');
+				return false;
+			});
+		} else {
+			return false;
+		}
+
+	});
+	$(".passreset").click(function () {
+		event.stopPropagation();
+		var offset = $(event.target).offset();//取消事件冒泡
+		var data={};
+		data.c_id=$(this).parents('tr').attr('c-id');
+		var passinfo=$(this).find(".passinfo");
+		passinfo.show(500);
+
+		$(document).click(function(event) {passinfo.hide(500);});
+    	return true;
+	});
+	$(".reset_form").submit(function() {
+		var new_pass = $(this).find(".new_pass").val();
+		var repeat_pass = $(this).find(".repeat_pass").val();
+
+		if (new_pass == '' || repeat_pass == '') {
+			alert('密码不可为空，请输入');
+			return false;
+		}
+		if (new_pass != repeat_pass) {
+			alert('两次密码不一致请重新输入');
+			return false;
+		}
+		console.log(new_pass, repeat_pass, $(this).parents('tr').attr('c-id'));
+		var data={};
+		data.c_id=$(this).parents('tr').attr('c-id');
+		data.password=new_pass;
+		var div_layer = $(this).parents(".passreset");
+		$.post("/adminuser/passreset", data, function(result) {
+			if (result='ok') {
+				// div_layer.hide();
+				alert('修改成功')
+				return false;
+			}
+			alert('修改密码失败');
+			return false;
+		});
+		return false;
+	});
+</script>

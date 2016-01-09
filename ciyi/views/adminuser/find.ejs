@@ -1,0 +1,76 @@
+<table id="roomlist"
+       class="table table-striped table-bordered table-hover bootstrap-datatable responsive">
+    <% if('empty' != userinfo){ %>
+    <thead>
+    <tr>
+        <th>用户 uid</th>
+        <th>用户昵称</th>
+        <th> 操 作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr uid="<%= userinfo.uid %>">
+        <td class="col-md-1"><%= userinfo.uid %></td>
+        <td class="col-md-1"><%= userinfo.nickname %></td>
+        <td class="col-md-1">
+            <% if('lock' == userinfo.operate){ %>
+            <button class="btn btn-success open">
+                <i class="glyphicon glyphicon-trash icon-white"></i>
+                <span class="status">解 锁</span>
+            </button>
+            <% }else{ %>
+            <button class="btn btn-danger lock">
+                <i class="glyphicon glyphicon-trash icon-white"></i>
+                <span class="status">锁 定</span>
+            </button>
+            <% } %>
+        </td>
+    </tr>
+    </tbody>
+    <% }else{ %>
+    <thead>
+    <tr>没有用户!</tr>
+    </thead>
+    <% } %>
+</table>
+<script type="text/javascript">
+    //添加页面加载事件
+    $(".lock").one("click",lock);
+    $(".open").one("click",lockDelete);
+    //事件实现方法可抽取代码
+    function lock(){
+        var data = {};
+        data.l_uid = $(this).parents('tr').attr('uid');
+        $.post("/adminuser/lock", data, function (result) {
+            var res = JSON.parse(result);
+            if (res.status = 'ok') {
+                alert('锁定成功');
+                $(".status").html('解 锁');
+                $(".status").parents('button').attr('class', 'btn btn-success open');
+                $(".status").siblings('i').remove();
+                $(".open").one("click",lockDelete);
+                return false;
+            }
+            alert('锁定失败');
+            return false;
+        });
+        return false;
+    }
+    function lockDelete(){
+        var data = {};
+        data.l_uid = $(this).parents('tr').attr('uid');
+        $.post("/adminuser/lockDelete", data, function (result) {
+            if (result.status = 'ok') {
+                alert('解锁成功');
+                $(".status").html('锁 定');
+                $(".status").parents('button').attr('class', 'btn btn-danger lock');
+                $(".status").siblings('i').remove();
+                $(".lock").one("click",lock);
+                return false;
+            }
+            alert('解锁失败');
+            return false;
+        });
+        return false;
+    }
+</script>
